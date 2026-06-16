@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log Mesin Rumput RW05</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+  body {
+    min-height: 100vh;
+    background: url('bg.png') no-repeat center fixed;
+    background-size: cover;
+    padding: 20px;
+    color: #fff;
+    padding-bottom: 100px;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
+  }
+  h2 { text-align: center; margin-bottom: 15px; font-size: 18px; }
+  input, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+  }
+  input {
+    background: rgba(255,255,255,0.9);
+    color: #333;
+  }
+  button {
+    background: #2196F3;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:active { transform: scale(0.98); }
+  .scan-btn { background: #FF5722; }
+  #reader {
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    color: #fff;
+  }
+  th, td {
+    padding: 8px 4px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+  th { font-weight: bold; }
+  #notif {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  .back-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+</style>
+</head>
+<body>
+
+<!-- CARD FORM -->
+<div class="card">
+  <h2>📋 Log Pemakaian Mesin</h2>
+  <input type="text" id="nama" placeholder="Nama Pemakai" required>
+  <input type="text" id="blok" value="Blok AC" readonly>
+  <input type="text" id="nohp" placeholder="Nomor HP / WA">
+  
+  <button class="scan-btn" onclick="startScan()">📷 Scan Barcode Mesin</button>
+  <div id="reader"></div>
+  <input type="text" id="idMesin" placeholder="ID Mesin hasil scan" readonly>
+
+  <button onclick="simpanLog()">Simpan Log</button>
+  <div id="notif"></div>
+</div>
+
+<!-- CARD RIWAYAT -->
+<div class="card">
+  <h2>📋 Riwayat Pemakaian</h2>
+  <table id="tabelLog">
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Nama</th>
+        <th>Blok</th>
+        <th>No HP</th>
+        <th>Mesin</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TOMBOL KEMBALI -->
+<button class="back-btn" onclick="history.back()">⬅ Kembali</button>
+
+<script>
+// GANTI URL SCRIPT KAMU DISINI
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyOb2l5fRftH91bvCkVXn7yiYzMzuJvJfwt1Xca3qaIOOa8RYHoqcaNIBcPCR-VGznf/exec";
+
+let html5QrCode;
+
+// SCAN BARCODE
+function startScan() {
+  document.getElementById('reader').style.display = 'block';
+  
+  html5QrCode = new Html5Qrcode("reader");
+  const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+  html5QrCode.start(
+    { facingMode: "environment" }, // kamera belakang
+    config,
+    (decodedText) => {
+      document.getElementById('idMesin').value = decodedText;
+      document.getElementById('notif').innerText = '✅ Barcode kebaca: ' + decodedText;
+      stopScan();
+    },
+    (errorMessage) => {
+      // abaikan error scan, biar gak spam
+    }
+  ).catch(err => {
+    alert('Gagal buka kamera: ' + err + '\nPake Chrome + HTTPS ya bang');
+  });
+}
+
+function stopScan() {
+  if(html5QrCode) {
+    html5QrCode.stop().then(() => {
+      document.getElementById('reader').style.display = 'none';
+    });
+  }
+}
+
+// SIMPAN LOG
+function simpanLog() {
+  const data = {
+    nama: document.getElementById('nama').value,
+    namaBlok: document.getElementById('blok').value,
+    nohp: document.getElementById('nohp').value,
+    idMesin: document.getElementById('idMesin').value || 'BELUM SCAN'
+  };
+
+  if(!data.nama) {
+    document.getElementById('notif').innerText = '⚠ Nama wajib diisi';
+    return;
+  }
+
+  document.getElementById('notif').innerText = 'Menyimpan...';
+
+  fetch(URL_SCRIPT, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(res => {
+    if(res.status == "OK") {
+      document.getElementById('notif').innerText = '✅ Berhasil disimpan';
+      document.getElementById('nama').value = '';
+      document.getElementById('nohp').value = '';
+      document.getElementById('idMesin').value = '';
+      loadLog();
+    } else {
+      document.getElementById('notif').innerText = '❌ Gagal: ' + res.pesan;
+    }
+  })
+  .catch(err => {
+    document.getElementById('notif').innerText = '❌ Gagal simpan: ' + err;
+  });
+}
+
+// LOAD RIWAYAT
+function loadLog(){
+fetch(URL_SCRIPT)
+.then(res => res.text()) // ganti .json() jadi .text() kalo pake CSV
+.then(csv => {
+  let tbody = document.querySelector("#tabelLog tbody");
+  tbody.innerHTML = "";
+  let rows = csv.split("\n").slice(1);
+  rows.forEach(r => {
+    if(r.trim()!="") tbody.innerHTML += `<tr><td>${r.replace(/,/g,"</td><td>")}</td></tr>`;
+  });
+})
+
+  fetch(URL_SCRIPT)
+  .then(res => res.json())
+  .then(data => {
+    let tbody = document.querySelector("#tabelLog tbody");
+    tbody.innerHTML = "";
+
+    if(data.length == 0) {
+      tbody.innerHTML = "<tr><td colspan='5'>Belum ada data</td></tr>";
+      return;
+    }
+
+    data.forEach(row => {
+      let tgl = new Date(row.tanggal).toLocaleString('id-ID');
+      tbody.innerHTML += `
+        <tr>
+          <td>${tgl}</td>
+          <td>${row.nama}</td>
+          <td>${row.namaBlok}</td>
+          <td>${row.nohp}</td>
+          <td>${row.idMesin}</td>
+        </tr>
+      `;
+    });
+  })
+  .catch(err => {
+    document.querySelector("#tabelLog tbody").innerHTML = "<tr><td colspan='5'>Gagal load: " + err + "</td></tr>";
+  });
+}
+
+loadLog();
+</script>
+</body>
+</html>
