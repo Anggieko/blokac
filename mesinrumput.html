@@ -222,6 +222,31 @@ async function simpan() {
   btn.disabled = false;
   btn.innerText = "SIMPAN KE SHEET";
 }
+  // Kirim data ke Google Sheet
+const form = document.querySelector('form'); // ganti 'form' jadi ID form lu kalo ada
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault(); // biar ga reload halaman
+  
+  const formData = new FormData(form);
+  
+  fetch(URL_SCRIPT, {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.text())
+  .then(data => {
+    console.log('Response:', data);
+    alert('Berhasil disimpan! Cek Google Sheet1');
+    form.reset();
+    // isi tanggal otomatis lagi abis reset
+    document.getElementById("tanggal").value = new Date().toLocaleString("id-ID", {dateStyle:"short", timeStyle:"short"});
+  })
+  .catch(err => {
+    console.error('Error:', err);
+    alert('Gagal simpan: ' + err.message);
+  });
+});
 </script>
 </body>
 </html>
