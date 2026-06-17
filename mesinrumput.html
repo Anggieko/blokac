@@ -1,238 +1,57 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Mesin Rumput - Blok AC</title>
-<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+<title>Scan Mesin Rumput</title>
 <style>
-*{
-  margin:0; padding:0; box-sizing:border-box;
-  font-family:'Segoe UI', sans-serif;
-}
-body{
-  background:url('bg.png') no-repeat center fixed;
-  background-size:cover;
-  min-height:100vh;
-  padding:20px;
-  color:#fff;
-}
-.container{ max-width:700px; margin:0 auto; }
-.card{
-  background:rgba(255,255,255,0.15);
-  backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
-  opacity:0;
-  transform:translateX(100px);
-  animation:slideInRight 0.6s ease-out forwards;
-}
-.section {
-  margin-top: 60px;
-  padding: 30px 20px;
-  border-radius: 0; /* ilangin lengkungan */
-  background: transparent; /* ilangin bg transparan */
-  backdrop-filter: none; /* ilangin blur */
-  border: none; /* ilangin border */
-  max-width: 420px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.card:nth-child(2){ animation-delay:0.2s; }
-@keyframes slideInRight{ to{ opacity:1; transform:translateX(0); } }
-h2{ text-align:center; margin-bottom:15px; text-shadow:0 2px 5px rgba(0,0,0,0.5); }
-input, button{ width:100%; padding:12px; border-radius:12px; border:none; margin-top:8px; font-size:14px; }
-input{ background:rgba(255,255,255,0.9); color:#000; }
-input[readonly]{ background:rgba(255,255,255,0.6); }
-button{ background:rgba(0,123,255,0.8); color:#fff; font-weight:bold; cursor:pointer; transition:0.3s; }
-button:hover{ background:rgba(0,123,255,1); transform:scale(1.02); }
-#reader{ margin:15px auto; border-radius:15px; overflow:hidden; display:none; }
-table{ width:100%; border-collapse:collapse; font-size:13px; }
-th, td{ padding:10px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.2); }
-th{ background:rgba(255,255,255,0.2); font-weight:700; }
-tr{ animation:slideInRight 0.4s ease-out forwards; opacity:0; }
-.badge-pemilik{ background:#28a745; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:bold; }
-.badge-peminjam{ background:#ffc107; color:#000; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:bold; }
-.notif{ text-align:center; margin-top:10px; font-size:13px; min-height:20px; }
-.warning{ background:rgba(255,193,7,0.3); border:1px solid #ffc107; padding:10px; border-radius:10px; font-size:12px; margin-bottom:10px; text-align:center; }
+body{background:#0f172a;color:white;font-family:sans-serif;padding:20px;text-align:center}
+input,button{width:100%;padding:14px;margin:10px 0;border-radius:10px;border:none;font-size:16px}
+button{background:#3b82f6;color:white;font-weight:bold}
+#reader{width:100%;max-width:400px;margin:20px auto;border-radius:12px;overflow:hidden;display:none}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="card">
-    <h2>🔧 Log Pemakaian Mesin</h2>
-    <div class="warning">
-      ⚠️ Kalo kamera blank: 1.Buka di Chrome 2.Kasih izin kamera 3.Pastikan HTTPS
-    </div>
+<h2>🛠️ Scan Mesin Rumput</h2>
 
-    <input type="text" id="nama" placeholder="Nama" required>
-    <input type="text" id="blok" placeholder=" Blok " value="Blok AC" required>
-    <input type="tel" id="nohp" placeholder="Nomor HP / WA" required>
-    <button onclick="mulaiScan()">📷 Scan Barcode Mesin</button>
-    <div id="reader"></div>
-    <input type="text" id="idMesin" placeholder="ID Mesin hasil scan" readonly>
-    <button onclick="submitLog()">Simpan Log</button>
-    <div class="notif" id="notif"></div>
-  </div>
+<form id="f">
+  <input name="nama" placeholder="Nama Peminjam" required>
+  <input name="blok" value="Blok AC" required>
+  <input name="wa" placeholder="Nomor HP/WA" required>
+  <input name="mesin" id="mesin" placeholder="ID Mesin - hasil scan" readonly required>
+  
+  <button type="button" onclick="mulaiScan()">📷 Scan Barcode</button>
+  <div id="reader"></div>
+  
+  <button type="submit">Simpan Log</button>
+</form>
 
-  <div class="card">
-    <h2>📋 Riwayat Pemakaian</h2>
-    <table id="tabelLog">
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>Nama</th>
-          <th>Nama Blok</th>
-          <th>No HP</th>
-          <th>Mesin</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody><tr><td colspan="6">Loading...</td></tr></tbody>
-    </table>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzC_g06sB3GdbEc0JblIQqojcCBhD588oIDx2V_bf-TENW7cL1dIzCChQuw0wEi1PjD7w/exec";
-
-// DATA PEMILIK MESIN - EDIT SESUAI PUNYAMU
-const dataMesin = {
-  "MESIN-01": "Blok AC",
-  "MESIN-02": "Blok AC",
-  "MESIN-03": "Blok BC",
-  "MESIN-04": "Blok CD"
-};
-
-let html5QrCode = null;
+const URL = 'https://script.google.com/macros/s/AKfycbyUh9dPq5vpUiHHeqrtZsxZwfg6p-XUIZByNRUtRqbXc5beFJzNaUsm0HirQudVB8Ml/exec'; // GANTI INI
+let html5QrCode;
 
 function mulaiScan(){
-  document.getElementById('reader').style.display = 'block';
-  document.getElementById('notif').innerText = "Buka kamera...";
-
-  if(typeof Html5Qrcode === 'undefined'){
-    document.getElementById('notif').innerText = "❌ Library belum ke-load. Refresh + buka di Chrome";
-    return;
-  }
-
+  document.getElementById('reader').style.display='block';
   html5QrCode = new Html5Qrcode("reader");
-
-  Html5Qrcode.getCameras().then(cameras => {
-    if(cameras.length == 0){
-      document.getElementById('notif').innerText = "❌ Kamera ga ketemu";
-      return;
-    }
-
-    let cameraId = cameras.find(c => c.label.toLowerCase().includes('back'))?.id || cameras[0].id;
-
-    document.getElementById('notif').innerText = "Arahkan ke QR Code...";
-
-    html5QrCode.start(
-      cameraId,
-      { fps: 10, qrbox: {width: 250, height: 250} },
-      qrCodeMessage => {
-        document.getElementById('idMesin').value = qrCodeMessage;
-        document.getElementById('notif').innerText = "✅ Scan berhasil: " + qrCodeMessage;
-        html5QrCode.stop().then(() => {
-          document.getElementById('reader').style.display = 'none';
-        });
-      },
-      errorMessage => {}
-    );
-  }).catch(err => {
-    document.getElementById('notif').innerText = "❌ Error kamera: " + err;
-    alert("Solusi: Buka di Chrome + kasih izin kamera + harus HTTPS");
-    document.getElementById('reader').style.display = 'none';
-  });
+  html5QrCode.start(
+    {facingMode:"environment"},
+    {fps:10, qrbox:250},
+    (decodedText)=>{
+      document.getElementById('mesin').value = decodedText;
+      html5QrCode.stop();
+      document.getElementById('reader').style.display='none';
+    },
+    ()=>{}
+  ).catch(err=>alert('Gagal buka kamera: '+err));
 }
 
-function submitLog(){
-  const nama = document.getElementById('nama').value;
-  const namaBlok = document.getElementById('blok').value;
-  const nohp = document.getElementById('nohp').value;
-  const idMesin = document.getElementById('idMesin').value;
-
-  if(!nama ||!namaBlok ||!nohp ||!idMesin){
-    alert("Lengkapi semua data + scan mesin dulu bang");
-    return;
-  }
-
-  const blokPemilik = dataMesin[idMesin] || "Unknown";
-  const status = (namaBlok.toLowerCase().trim() == blokPemilik.toLowerCase().trim())? "Pemilik" : "Peminjam";
-
-  const data = {
-    action: "addLog",
-    tanggal: new Date().toLocaleDateString('id-ID'),
-    nama: nama,
-    namaBlok: namaBlok,
-    nohp: nohp,
-    idMesin: idMesin,
-    status: status
-  };
-
-  document.getElementById('notif').innerText = "Menyimpan...";
-
-  fetch(URL_SCRIPT, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-.then(res => res.text())
-.then(() => {
-    document.getElementById('notif').innerText = "✅ Log berhasil disimpan - Status: " + status;
-    loadLog();
-    document.getElementById('nama').value = "";
-    document.getElementById('nohp').value = "";
-    document.getElementById('idMesin').value = "";
-  })
-.catch(err => {
-    document.getElementById('notif').innerText = "❌ Gagal simpan: " + err;
-  });
+document.getElementById('f').onsubmit = async e=>{
+  e.preventDefault();
+  let res = await fetch(URL, {method:'POST', body:new FormData(e.target)});
+  alert(await res.text());
+  if(await res.text()=='OK') e.target.reset();
 }
-
-function loadLog(){
-  if(URL_SCRIPT.includes("https://script.google.com/macros/s/AKfycbzC_g06sB3GdbEc0JblIQqojcCBhD588oIDx2V_bf-TENW7cL1dIzCChQuw0wEi1PjD7w/exec")){
-    document.querySelector("#tabelLog tbody").innerHTML = "<tr><td colspan='6'>Isi URL_SCRIPT dulu bang</td></tr>";
-    return;
-  }
-
-  fetch(URL_SCRIPT + "?action=getLogMesin")
-.then(res => res.json())
-.then(data => {
-    let tbody = document.querySelector("#tabelLog tbody");
-    tbody.innerHTML = "";
-
-    if(data.length == 0){
-      tbody.innerHTML = "<tr><td colspan='6'>Belum ada data</td></tr>";
-      return;
-    }
-
-    data.reverse().slice(0,50).forEach((row, i) => {
-      let badge = row.status == "Pemilik"
-   ? `<span class="badge-pemilik">Pemilik</span>`
-        : `<span class="badge-peminjam">Peminjam</span>`;
-
-      tbody.innerHTML += `
-        <tr style="animation-delay:${i*0.05}s">
-          <td>${row.tanggal}</td>
-          <td>${row.nama}</td>
-          <td>${row.namaBlok}</td>
-          <td>${row.nohp}</td>
-          <td>${row.idMesin}</td>
-          <td>${badge}</td>
-        </tr>
-      `;
-    });
-  })
-.catch(err => {
-    document.querySelector("#tabelLog tbody").innerHTML = "<tr><td colspan='6'>Gagal load data</td></tr>";
-  });
-}
-
-window.onload = loadLog;
 </script>
 </body>
 </html>
