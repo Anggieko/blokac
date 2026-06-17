@@ -1,30 +1,102 @@
-<!DOCTYPE html>
-<html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scan Mesin Rumput</title>
 <style>
-body{background:#0f172a;color:white;font-family:sans-serif;padding:20px;text-align:center}
-input,button{width:100%;padding:14px;margin:10px 0;border-radius:10px;border:none;font-size:16px}
-button{background:#3b82f6;color:white;font-weight:bold}
-#reader{width:100%;max-width:400px;margin:20px auto;border-radius:12px;overflow:hidden;display:none}
+* {box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:url('bg.png') no-repeat center fixed;
+  background-size:cover;
+  font-family:'Segoe UI',sans-serif;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;color:white
+}
+
+.card{
+  width:100%;max-width:420px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:24px;
+  padding:30px 25px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3)
+}
+
+h2{text-align:center;margin-bottom:25px;font-weight:600}
+
+input{
+  width:100%;padding:14px;margin:10px 0;
+  border-radius:12px;border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.15);color:white;font-size:16px;outline:none
+}
+input::placeholder{color:rgba(255,255,255,0.7)}
+input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,0.3)}
+
+button{
+  width:100%;padding:15px;margin:12px 0;
+  border-radius:12px;border:none;font-size:16px;font-weight:bold;
+  cursor:pointer;transition:0.2s
+}
+.btn-scan{background:#3b82f6;color:white}
+.btn-scan:active{transform:scale(0.97)}
+.btn-save{background:#22c55e;color:white}
+.btn-save:active{transform:scale(0.97)}
+.btn-back{
+  background:rgba(255,255,255,0.2);color:white;
+  width:auto;padding:12px 30px;margin-top:20px
+}
+
+#reader{width:100%;margin:15px 0;border-radius:16px;overflow:hidden;display:none}
+
+/* POPUP */
+.popup{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);
+  display:none;align-items:center;justify-content:center;z-index:999
+}
+.popup.show{display:flex;animation:fadeIn 0.3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.popup-box{
+  background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.2);
+  padding:35px 30px;border-radius:20px;text-align:center;
+  max-width:320px;animation:scaleIn 0.3s
+}
+@keyframes scaleIn{from{transform:scale(0.8)}to{transform:scale(1)}}
+.popup-box h3{font-size:22px;margin-bottom:10px}
+.popup-box p{opacity:0.9;margin-bottom:20px}
 </style>
 </head>
 <body>
 
-<h2>🛠️ Scan Mesin Rumput</h2>
+<div class="card">
+  <h2>🛠️ Scan Mesin Rumput</h2>
+  <form id="f">
+    <input name="nama" placeholder="Nama" required>
+    <input name="blok" value="Blok AC" required>
+    <input name="wa" placeholder="Nomor HP/WA" required>
+    <input name="mesin" id="mesin" placeholder="ID Mesin - hasil scan" readonly required>
+    
+    <button type="button" class="btn-scan" onclick="mulaiScan()">📷 Scan Barcode</button>
+    <div id="reader"></div>
+    
+    <button type="submit" class="btn-save">Simpan Log</button>
+  </form>
+  
+  <div style="text-align:center">
+<button class="btn-back" onclick="window.location.href='peralatan.html'">⬅️ Kembali</button>
+  </div>
+</div>
 
-<form id="f">
-  <input name="nama" placeholder="Nama Peminjam" required>
-  <input name="blok" value="Blok AC" required>
-  <input name="wa" placeholder="Nomor HP/WA" required>
-  <input name="mesin" id="mesin" placeholder="ID Mesin - hasil scan" readonly required>
-  
-  <button type="button" onclick="mulaiScan()">📷 Scan Barcode</button>
-  <div id="reader"></div>
-  
-  <button type="submit">Simpan Log</button>
-</form>
+<!-- POPUP SUKSES -->
+<div class="popup" id="popup">
+  <div class="popup-box">
+    <h3>✅ Berhasil!</h3>
+    <p>Data berhasil disimpan ke Sheet</p>
+    <button class="btn-save" onclick="tutupPopup()">OK</button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
@@ -49,8 +121,17 @@ function mulaiScan(){
 document.getElementById('f').onsubmit = async e=>{
   e.preventDefault();
   let res = await fetch(URL, {method:'POST', body:new FormData(e.target)});
-  alert(await res.text());
-  if(await res.text()=='OK') e.target.reset();
+  let txt = await res.text();
+  if(txt=='OK'){
+    document.getElementById('popup').classList.add('show');
+    e.target.reset();
+  } else {
+    alert('Error: ' + txt);
+  }
+}
+
+function tutupPopup(){
+  document.getElementById('popup').classList.remove('show');
 }
 </script>
 </body>
