@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rincian Pengeluaran</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background:url('./bg.png') center/cover no-repeat;;
+  padding: 16px 16px 90px 16px;
+  min-height: 100vh;
+}
+.header {
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.header h1 { font-size: 20px; }
+.loading {
+  text-align: center;
+  color: white;
+  padding: 60px 20px;
+}
+.kategori {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin: 24px 0 12px 0;
+  padding-left: 4px;
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+}
+.tanggal {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 6px;
+}
+.keterangan {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.nominal {
+  font-size: 16px;
+  font-weight: 700;
+  color: #d63031;
+  text-align: right;
+}
+.total-card {
+  background: #0f9b8e;
+  color: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: center;
+}
+.total-card.label { font-size: 13px; opacity: 0.9; }
+.total-card.value { font-size: 20px; font-weight: 800; margin-top: 4px; }
+
+.btn-wrap {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+}
+.btn {
+  background: white;
+  color: #0f9b8e;
+  border: none;
+  padding: 14px 34px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📝 Rincian Pengeluaran</h1>
+</div>
+
+<div id="loading" class="loading">⏳ Mengambil data...</div>
+<div id="listRincian"></div>
+
+<div class="btn-wrap">
+  <button class="btn" onclick="window.location.href='cashflow.html?v='+Date.now()">← Kembali</button>
+</div>
+
+<script>
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=1984994553&single=true&output=csv';
+
+function formatRupiah(str) {
+  if(!str || str.trim() === '' || str === 'Rp0') return 'Rp0';
+  // Hapus Rp, spasi, titik. Koma ribuan juga dihapus dulu
+  let angka = str.replace(/Rp|\s/g, '').replace(/\./g, '').replace(/,/g, '');
+  if(isNaN(angka) || angka === '') return str.trim();
+  return 'Rp' + Number(angka).toLocaleString('id-ID');
+}
+
+// Parser CSV yg bener: koma di dalam "Rp1,380,500" ga dipotong
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+
+  for(let i = 0; i < line.length; i++) {
+    let char = line[i];
+    if(char === '"') {
+      inQuotes =!inQuotes;
+    } else if(char === ',' &&!inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+function parseCSV(csv) {
+  const lines = csv.split('\n');
+  const data = { sosial: [], fasilitas: [], dana: [], total: {} };
+
+  for(let i = 1; i < lines.length; i++) {
+    let line = lines[i].trim();
+    if(!line) continue;
+
+    let cols = parseCSVLine(line);
+    if(cols.length < 9) continue;
+
+    // Baris TOTAL
+    if(cols[0]?.toLowerCase().includes('total')) {
+      data.total.sosial = cols[2];
+      data.total.fasilitas = cols[5];
+      data.total.dana = cols[8];
+      continue;
+    }
+
+    // SOSIAL
+    if(cols[0] && cols[1] && cols[2] &&!cols[0].toLowerCase().includes('tanggal')) {
+      data.sosial.push({ tgl: cols[0], ket: cols[1], nom: cols[2] });
+    }
+    // FASILITAS
+    if(cols[3] && cols[4] && cols[5] &&!cols[3].toLowerCase().includes('tanggal')) {
+      data.fasilitas.push({ tgl: cols[3], ket: cols[4], nom: cols[5] });
+    }
+    // DANA DARURAT
+    if(cols[6] && cols[7] && cols[8] &&!cols[6].toLowerCase().includes('tanggal')) {
+      data.dana.push({ tgl: cols[6], ket: cols[7], nom: cols[8] });
+    }
+  }
+  return data;
+}
+
+function buatCard(item) {
+  return `
+    <div class="card">
+      <div class="tanggal">${item.tgl}</div>
+      <div class="keterangan">${item.ket}</div>
+      <div class="nominal">${formatRupiah(item.nom)}</div>
+    </div>
+  `;
+}
+
+fetch(sheetURL)
+.then(res => res.text())
+.then(csv => {
+    const data = parseCSV(csv);
+    const container = document.getElementById('listRincian');
+    let html = '';
+
+    if(data.sosial.length > 0) {
+      html += `<div class="kategori">💙 Sosial</div>`;
+      data.sosial.forEach(item => html += buatCard(item));
+      html += `<div class="total-card"><div class="label">Total Sosial</div><div class="value">${formatRupiah(data.total.sosial)}</div></div>`;
+    }
+
+    if(data.fasilitas.length > 0) {
+      html += `<div class="kategori">🔧 Fasilitas</div>`;
+      data.fasilitas.forEach(item => html += buatCard(item));
+      html += `<div class="total-card"><div class="label">Total Fasilitas</div><div class="value">${formatRupiah(data.total.fasilitas)}</div></div>`;
+    }
+
+    if(data.dana.length > 0) {
+      html += `<div class="kategori">🚨 Dana Darurat</div>`;
+      data.dana.forEach(item => html += buatCard(item));
+      html += `<div class="total-card"><div class="label">Total Dana Darurat</div><div class="value">${formatRupiah(data.total.dana)}</div></div>`;
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    container.innerHTML = html;
+  })
+.catch(err => {
+    document.getElementById('loading').innerHTML = '❌ Gagal load data';
+    console.error(err);
+  });
+</script>
+
+</body>
+</html>

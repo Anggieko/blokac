@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu</title>
+<style>
+body{
+  margin:0;
+  padding:20px;
+  font-family:sans-serif;
+  color:#fff;
+  background:url('bg.png') no-repeat center fixed; /* GANTI NAMA FOTO KAMU DI SINI */
+  background-size:cover;
+}
+   /* CARD NOTIFIKASI ATAS */
+.notif-card{
+  background:rgba(255,255,255,0.22);
+  backdrop-filter:blur(10px);
+  border-radius:20px; /* samain sama card biru ijo */
+  padding:18px 16px;
+  margin-bottom:14px;
+  margin-left:0; /* KUNCI: reset margin kiri */
+  margin-right:0; /* KUNCI: reset margin kanan */
+  width:100%; /* KUNCI: lebar full ngikutin parent */
+  box-sizing:border-box; /* KUNCI: padding ga nambahin lebar */
+  box-shadow:0 4px 20px rgba(0,0,0,0.1); /* samain bayangan */
+}
+ .notif-header{
+    display:flex;gap:10px;align-items:center;margin-bottom:10px;
+  }
+ .notif-header.bell{
+    font-size:22px;color:#fff;
+  }
+ .notif-header.judul{
+    font-weight:700;font-size:14px;color:#fff;
+  }
+ .notif-isi{
+  font-size:13px;color:#fff;line-height:1.5;
+  white-space:pre-wrap; /* biar enter di Sheet kebaca */
+  word-wrap:break-word;
+}
+.menu-card{
+  border-radius:20px;
+  padding:20px 10px;
+  text-align:center;
+  color:#fff;
+  height:140px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  margin-bottom:16px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,0.25);
+  box-shadow:0 8px 32px 0 rgba(0,0,0,0.4);
+  animation:slideInLeft 0.6s ease-out backwards; /* TAMBAH INI */
+}
+
+@keyframes slideInLeft{
+  from{opacity:0; transform:translateX(-60px)}
+  to{opacity:1; transform:translateX(0)}
+}
+  
+  /* EFEK KACA BURAM */
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,0.25);
+  box-shadow:0 8px 32px 0 rgba(0,0,0,0.4);
+  transition:all 0.2s;
+}
+
+.menu-card:active{
+  transform:scale(0.96);
+  background:rgba(255,255,255,0.08);
+}
+
+.icon{
+  font-size:42px;
+  margin-bottom:12px;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:5px;
+  text-shadow:0 2px 6px rgba(0,0,0,0.6);
+}
+
+.sub{
+  font-size:13px;
+  opacity:0.9;
+  text-shadow:0 1px 4px rgba(0,0,0,0.6);
+}
+
+.grid-menu{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.flex-2kolom{
+  display:flex;
+  gap:16px;
+}
+@keyframes slideInLeft{
+  from{
+    opacity:0;
+    transform:translateX(-60px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+</style>
+</head>
+<body>
+  <h2>Selamat Datang di Sarana informasi Blok AC</h2>
+ <div class="notif-card" id="cardPengumuman" onclick="tampilDetail()">
+  <div class="notif-header">
+    <span class="bell">🔔</span>
+    <div class="judul" id="judulPengumuman">Loading...</div>
+  </div>
+  <div class="notif-isi loading" id="isiPengumuman">Ambil data dari Sheet...</div>
+</div>
+
+<!-- BARIS 1: CASHFLOW + STATUS -->
+<div class="grid-menu">
+  <div class="menu-card" onclick="window.location.href='cashflow.html'">
+    <div class="icon">🔄</div>
+    <div class="title">CASHFLOW</div>
+    <div class="sub">Pemasukan - Pengeluaran</div>
+  </div>
+  
+  <div class="menu-card" onclick="window.location.href='iuran1.html'">
+    <div class="icon">💵</div>
+    <div class="title">Status<br>Pembayaran<br>Iuran</div>
+    <div class="sub"></div>
+  </div>
+</div>
+
+<!-- BARIS 2: KONTAK FULL -->
+<div class="menu-card" onclick="window.location.href='kontak.html'">
+  <div class="icon">📞</div>
+  <div class="title">KONTAK</div>
+  <div class="sub">Daftar Kontak Pengurus</div>
+</div>
+
+<!-- BARIS 3: ARSIP + MENU BARU 2 KOLOM -->
+<div class="flex-2kolom">
+  <div class="menu-card" style="flex:1" onclick="window.location.href='notulensiarsip.html'">
+    <div class="icon">📁</div>
+    <div class="title">Arsip<br>Notulensi<br>Rapat</div>
+    <div class="sub"></div>
+  </div>
+  
+  <div class="menu-card" style="flex:1" onclick="window.location.href='lapor.html'">
+    <div class="icon">📝</div>
+    <div class="title">Lapor & Keluhan</div>
+    <div class="sub"></div>
+  </div>
+</div>
+<a href="peralatan.html" style="text-decoration:none;">
+  <div class="menu-card">
+    <div style="font-size:40px; margin-bottom:8px;">🏢</div>
+    <div style="font-weight:bold; font-size:16px; margin-bottom:4px;">Peralatan</div>
+    <div style="font-size:12px; opacity:0.8;">Daftar Peralatan</div>
+  </div>
+</a>
+<script>
+const PENGUMUMAN_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=866521813&single=true&output=csv";
+
+let isiFull = '';
+
+function setCard(judul, isi, error = false){
+  document.getElementById('judulPengumuman').innerText = judul;
+  document.getElementById('isiPengumuman').innerText = isi;
+  document.getElementById('isiPengumuman').classList.remove('loading');
+  if(error) document.getElementById('judulPengumuman').style.color = 'red';
+}
+
+fetch(PENGUMUMAN_URL + '&t=' + Date.now())
+.then(res => res.text())
+.then(csv => {
+  let baris = csv.trim().split('\n');
+  if(baris.length === 0) throw new Error('Sheet kosong');
+
+  let dataBaris = baris[1] || baris[0]; // ambil baris 2, kalo nggak ada pake baris 1
+  let isiFull = dataBaris.replace(/"/g,'').trim();
+
+  document.getElementById('judulPengumuman').innerText = 'Pengumuman';
+  document.getElementById('isiPengumuman').innerText = isiFull; // langsung full, nggak dipotong
+  document.getElementById('isiPengumuman').classList.remove('loading');
+})
+.catch(err => {
+  document.getElementById('judulPengumuman').innerText = 'Gagal Load';
+  document.getElementById('isiPengumuman').innerText = err.message;
+});// Fungsi buat isi card pengumuman terbaru
+function isiCardPengumuman(data){
+  if(!data || data.length === 0) return;
+
+  let terbaru = data[0]; // ambil baris paling atas = paling baru
+  let judul = terbaru[0] || 'Pengumuman';
+  let isi = terbaru[1] || '-';
+
+  // potong isi biar nggak kepanjangan di card
+  if(isi.length > 80) isi = isi.substring(0, 80) + '...';
+
+  document.getElementById('cardPengumuman').innerHTML = `
+    <div class="notif-icon">🔔</div>
+    <div class="notif-text">
+      <div style="font-weight:700;font-size:14px;color:#000;margin-bottom:5px">${judul}</div>
+      <div style="font-size:12px;color:#666;line-height:1.5">${isi}</div>
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>

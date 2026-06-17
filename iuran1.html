@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iuran Blok AC 2026</title>
+<style>
+:root{ --hijau:#0f9b8e; --bg:#e6f7f5; }
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{  background:url('./bg.png') center/cover no-repeat;;padding:16px;color:#1f2937}
+
+h1{
+  text-align:center;margin-bottom:16px;font-size:18px;
+  font-weight:700;color:var(--hijau);display:flex;align-items:center;justify-content:center;gap:8px
+}
+
+/* 1 CARD BESAR */
+.card-besar{
+  background:white;border-radius:24px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  padding:16px;max-width:100%;margin:0 auto;
+}
+
+/* SEARCH ROUNDED */
+.search-box{margin-bottom:16px}
+.search-box input{
+  width:100%;padding:12px 18px;border:1px solid #e5e7eb;
+  border-radius:50px;font-size:14px;outline:none;
+}
+.search-box input:focus{border-color:var(--hijau)}
+
+/* WRAP SCROLL HORIZONTAL + VERTIKAL */
+.tabel-scroll{
+  overflow:auto;max-height:65vh;padding-bottom:8px;
+}
+
+/* GRID KOLOM FIX */
+.row{
+  display:grid;
+  grid-template-columns:70px 130px repeat(12, 60px);
+  min-width:1050px;gap:0;align-items:center;
+}
+
+/* HEADER STICKY ATAS DI DALEM CARD */
+.row.header{
+  background:var(--hijau);color:white;font-weight:700;
+  font-size:12px;border-radius:12px 12px 0 0;
+  position:sticky;top:0;z-index:20;
+}
+.row.header div{
+  padding:12px 6px;text-align:center;white-space:nowrap;
+  background:var(--hijau);
+}
+.row.header div:first-child{
+  position:sticky;left:0;z-index:25;
+  border-radius:12px 0 0 12px;text-align:left;padding-left:12px;
+  background:#0a6b62;
+}
+.row.header div:last-child{border-radius:0 12px 12px 0}
+
+/* ITEM CARD PER BARIS */
+.row.item{
+  background:#f9fafb;margin-top:8px;border-radius:12px;
+}
+.row.item div{
+  padding:14px 6px;font-size:13px;text-align:center;
+  white-space:nowrap;border-bottom:1px solid #f1f5f9;
+  background:#f9fafb;
+}
+.row.item:last-child div{border-bottom:0}
+.row.item div:first-child{
+  position:sticky;left:0;z-index:10;
+  text-align:left;font-weight:800;color:var(--hijau);
+  font-size:14px;padding-left:12px;
+  background:white;border-left:4px solid var(--hijau);
+  box-shadow:3px 0 6px rgba(0,0,0,0.06);
+  border-radius:12px 0 0 12px;
+}
+.row.item div:nth-child(2){text-align:left;padding-left:8px}
+
+/* CEKLIS BULAT */
+.paid{
+  background:#22c55e;color:white;border-radius:50%;
+  width:26px;height:26px;display:inline-flex;
+  align-items:center;justify-content:center;font-weight:800;font-size:13px;margin:auto
+}
+.unpaid{color:#d1d5db;font-size:16px}
+
+.loading{text-align:center;padding:50px;color:#9ca3af}
+.btn{
+  display:block;margin:16px auto 0;background:var(--hijau);color:white;
+  border:none;padding:12px 32px;border-radius:50px;font-weight:700;font-size:14px
+}
+.btn-wrap {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 0 16px;
+}
+.btn {
+  flex: 1;
+  max-width: 180px;
+  background: white;
+  color: #0f9b8e;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+.btn.rincian {
+  background: #ff7675;
+  color: white;
+}
+.btn:active {
+  transform: scale(0.96);
+}
+</style>
+</head>
+<body>
+
+<h1>📊 Data Iuran Blok AC 2026</h1>
+
+<div class="card-besar">
+  <div class="search-box">
+    <input type="text" id="search" placeholder="🔍 Cari No Rumah atau Nama...">
+  </div>
+
+  <div id="loading" class="loading">⏳ Loading data...</div>
+
+  <div class="tabel-scroll" id="wrap" style="display:none">
+    <div id="tabel"></div>
+  </div>
+
+ </div>
+
+
+<script>
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=44172498&single=true&output=csv';
+
+function parseCSV(line){
+  const res=[];let cur='';let q=false;
+  for(let c of line){
+    if(c=='"')q=!q;
+    else if(c==','&&!q){res.push(cur.trim());cur=''}
+    else cur+=c
+  }
+  res.push(cur.trim());
+  return res;
+}
+
+fetch(sheetURL)
+.then(r=>r.text())
+.then(csv=>{
+  const rows=csv.split('\n').map(l=>l.trim()).filter(l=>l);
+  const header=parseCSV(rows[0]);
+  const tbl=document.getElementById('tabel');
+
+  let html='';
+
+  // HEADER
+  html+=`<div class="row header">`;
+  header.forEach(h=>html+=`<div>${h||'-'}</div>`);
+  html+=`</div>`;
+
+  // DATA
+  for(let i=1;i<rows.length;i++){
+    let cols=parseCSV(rows[i]);
+    if(!cols[0]) cols[0]='[KOSONG]';
+
+    html+=`<div class="row item" data-no="${cols[0].toLowerCase()}" data-nama="${(cols[1]||'').toLowerCase()}">`;
+    cols.forEach((c,idx)=>{
+      if(idx>1){
+        c=(c==='v'||c.toLowerCase()==='lunas')?'<span class="paid">✓</span>':'<span class="unpaid">-</span>';
+      }
+      html+=`<div>${c||'-'}</div>`;
+    });
+    html+=`</div>`;
+  }
+  tbl.innerHTML=html;
+  document.getElementById('loading').style.display='none';
+  document.getElementById('wrap').style.display='block';
+})
+.catch(()=>document.getElementById('loading').innerHTML='❌ Gagal load data');
+
+// SEARCH
+document.getElementById('search').addEventListener('input',e=>{
+  let kw=e.target.value.toLowerCase();
+  document.querySelectorAll('.row.item').forEach(row=>{
+    let match=row.dataset.no.includes(kw) || row.dataset.nama.includes(kw);
+    row.style.display=match?'grid':'none';
+  });
+});
+</script>
+<style>
+.copy-card{
+  background:#f8fafc;padding:20px;border-radius:12px;
+  margin:16px 0;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06)
+}
+.no-rek{font-size:26px;font-weight:800;letter-spacing:3px;color:#0f172a;margin:10px 0}
+.bank{font-size:15px;color:#475569;margin-bottom:14px}
+.copy-btn{
+  padding:13px 24px;background:#2563eb;color:white;border:none;
+  border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;
+  transition:all 0.2s;width:100%;max-width:280px
+}
+.copy-btn:hover{background:#1d4ed8}
+.copy-btn:active{transform:scale(0.97)}
+.copy-btn.sukses{background:#16a34a}
+.note{font-size:12px;color:#64748b;margin-top:10px}
+</style>
+
+<div class="copy-card">
+  <div style="font-size:13px;font-weight:600;color:#64748b;letter-spacing:0.5px">
+    TRANSFER KE REKENING KHUSUS BLOK AC
+  </div>
+  
+  <div class="no-rek">007264620425</div>
+  <div class="bank">BCA Digital • a/n fikry aliyansyah Kusuma</div>
+  
+  <button class="copy-btn" onclick="copyLengkap(this)">
+    📋 Salin Data Transfer
+  </button>
+  <div class="note">Catatan: tulis no rumah + iuran apa</div>
+</div>
+<div class="btn-wrap">
+  <button class="btn" onclick="window.location.href='menuu.html?v='+Date.now()">← Kembali</button>
+  <button class="btn rincian" onclick="window.location.href='danaalokasi.html?v='+Date.now()">📝 Alokasi Dana</button>
+</div>
+<script>
+function copyLengkap(btn){
+  const data = `007264620425
+BCA Digital
+a/n fikry aliyansyah Kusuma
+
+Catatan: [isi no rumah] + [iuran apa]`;
+  
+  navigator.clipboard.writeText(data).then(() => {
+    btn.innerHTML = '✅ Tersalin!';
+    btn.classList.add('sukses');
+    setTimeout(() => {
+      btn.innerHTML = '📋 Salin Data Transfer';
+      btn.classList.remove('sukses');
+    }, 2000);
+  }).catch(() => {
+    alert('Gagal copy. Salin manual ya');
+  });
+}
+</script>
+</body>
+</html>

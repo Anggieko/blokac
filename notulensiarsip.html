@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsip Notulensi - Blok AC</title>
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:url('bg.png') no-repeat center fixed;
+  background-size:cover;
+  padding:24px 16px 120px 16px; /* padding bawah gede buat tombol */
+  color:#fff;
+}
+
+.card{
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(12px);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:16px;
+  border:1px solid rgba(255,255,255,0.2);
+}
+
+h2{
+  margin:0 0 16px 0;
+  font-size:18px;
+  font-weight:700;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  background:rgba(0,0,0,0.2);
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.item span{font-size:14px;font-weight:500}
+
+.btn-download{
+  background:linear-gradient(135deg,#4ade80,#22c55e);
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none;
+}
+
+/* Tombol back bawah tengah */
+.back-btn{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.3);
+  padding:12px 28px;
+  border-radius:50px;
+  color:#fff;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  transition:all 0.2s;
+}
+.back-btn:active{
+  transform:translateX(-50%) scale(0.95);
+  background:rgba(255,255,255,0.25);
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Arsip Notulensi Rapat Blok AC</h2>
+  
+  <div class="item">
+    <span>Rapat 13 Juli 2025</span>
+    <a href="https://drive.google.com/file/d/1AN5v_yRUGTs86Q6M7b0iFb_yu72S0iYz/view?export=download" class="btn-download" download>Download PDF</a>
+  </div>
+  
+  <div class="item">
+    <span>Rapat 17 April 2025</span>
+    <a href="https://drive.google.com/file/d/1n-ga2OtRUvGJWTYVi3pUnbnHuRhkC4ym/view?usp=drivesdk" class="btn-download" download>Download PDF</a>
+  </div>
+  
+  <div class="item">
+    <span>Rapat 02 Februari 2025</span>
+    <a href="https://drive.google.com/file/d/1OyObpoiXWETJZVJq2YVW7SV9JEdCt8Y1/view?usp=drivesdk" class="btn-download" download>Download PDF</a>
+  </div>
+
+ <div class="item">
+    <span>Surat Pengajuan Benteng Blok AC</span>
+    <a href="https://drive.google.com/file/d/1MyVNcav-R-8aQMG1L79tx0XAbnF2o30Q/view?usp=drivesdk" class="btn-download" download>Download PDF</a>
+  </div>
+
+ <div class="item">
+    <span>Surat Pemasangan Infrastruktur Netciti</span>
+    <a href="https://drive.google.com/file/d/1qoeZmshIU4tYb37CIFRJgLeLlv843VkB/view?usp=drivesdk" class="btn-download" download>Download PDF</a>
+  </div>
+
+ <div class="item">
+    <span>Surat Izin Pembuatan Gazebo dan Pos</span>
+    <a href="https://drive.google.com/file/d/1RP3mWsTJEqERpVZw8b1lPrQkalb8Pufg/view?usp=drivesdk" class="btn-download" download>Download PDF</a>
+  </div>
+
+<div class="item">
+    <span>Surat Pengajuan Portal</span>
+    <a href="https://drive.google.com/file/d/1VGeYiJTtrLr5Jjrv6DX5F8x68dUb7B-S/view?usp=drivesdk" class="btn-download" download>Download PDF</a>
+  </div>
+</div>
+
+<!-- Tombol back bawah tengah -->
+<a href="menuu.html" class="back-btn">← Kembali</a>
+
+</body>
+</html>
