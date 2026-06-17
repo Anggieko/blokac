@@ -61,72 +61,75 @@
 </style>
 </head>
 <body>
-  <div class="glass">
-    <h2>📋 Log Pemakaian Mesin</h2>
-    <form id="formLog">
-      <input id="nama" placeholder="Nama Pemakai" required>
-      <input id="blok" value="Blok AC" required>
-      <input id="hp" placeholder="Nomor HP / WA" required>
+<div class="glass">
+  <h2>📋 Log Pemakaian Mesin</h2>
+  
+  <form id="formLog">
+    <input id="nama" name="nama" placeholder="Nama Pemakai" required>
+    
+    <input id="blok" name="blok" value="Blok AC" required>
+    
+    <input id="hp" name="hp" placeholder="Nomor HP / WA" required> 
+    
+    <button type="button" class="btn-scan" onclick="mulaiScan()">📷 Scan Barcode Mesin</button>
+    <div id="reader" style="width:300px; margin:10px auto;"></div>
+    
+    <input id="mesin" name="mesin" placeholder="ID Mesin hasil scan" required readonly>
+    
+    <button type="submit" class="btn-simpen">Simpan Log</button>
+  </form>
+</div>
 
-      <button type="button" class="btn-scan" onclick="mulaiScan()">📷 Scan Barcode Mesin</button>
-      <div id="reader"></div>
-      <input id="mesin" placeholder="ID Mesin hasil scan" required readonly>
+<button class="btn-back" onclick="history.back()">⬅️ Kembali</button>
 
-      <button type="submit" class="btn-simpan">Simpan Log</button>
-    </form>
-  </div>
-
-  <button class="btn-back" onclick="history.back()">⬅️ Kembali</button>
+<!-- Library QR Scanner -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <script>
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxvSlQ7nsApCTHgWIw4ixLuOP3a-uM7zJLqD1NG1L6JWQ65CitWv3SdVgzQuXcTODdw/exec";
-let scanner;
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxvSlQ7nsApCTHgWIw4ixLuOP3a-uM7zJLqD1NG1L6JWQ65CitWv3SdVgzQuXcTODdw/exec'; // ganti link /exec lu
 
-function mulaiScan(){
-  document.getElementById("reader").style.display = "block";
-  scanner = new Html5Qrcode("reader");
-  scanner.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 200 },
-    qrCodeMessage => {
-      document.getElementById("mesin").value = qrCodeMessage;
-      scanner.stop();
-      document.getElementById("reader").style.display = "none";
-    },
-    error => {}
+let html5QrcodeScanner;
+
+// Fungsi Scan
+function mulaiScan() {
+  document.getElementById("reader").innerHTML = "";
+  html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader", 
+    { fps: 10, qrbox: 250 }
   );
+  html5QrcodeScanner.render(onScanSuccess);
 }
 
-document.getElementById("formLog").addEventListener("submit", function(e){
+function onScanSuccess(decodedText) {
+  document.getElementById("mesin").value = decodedText; // isi ke input mesin
+  html5QrcodeScanner.clear(); // matiin kamera
+  alert("Scan berhasil: " + decodedText);
+}
+
+// Fungsi Simpan ke Sheet
+document.getElementById('formLog').addEventListener('submit', function(e) {
   e.preventDefault();
-  let btn = document.querySelector(".btn-simpan");
-  btn.disabled = true;
-  btn.innerText = "Menyimpan...";
-
-  let data = {
-    nama: document.getElementById("nama").value,
-    blok: document.getElementById("blok").value,
-    hp: document.getElementById("hp").value,
-    mesin: document.getElementById("mesin").value
-  };
-
+  
+  // Bikin tanggal otomatis
+  let tgl = document.createElement('input');
+  tgl.type = 'hidden';
+  tgl.name = 'tanggal';
+  tgl.value = new Date().toLocaleString("id-ID", {dateStyle:"short", timeStyle:"short"});
+  this.appendChild(tgl);
+  
   fetch(URL_SCRIPT, {
-    method: "POST",
-    body: JSON.stringify(data)
+    method: 'POST',
+    body: new FormData(this)
   })
- .then(res => res.json())
- .then(() => {
-    alert("✅ data udah tersimpan mesin di jaga ya");
-    document.getElementById("formLog").reset();
-    document.getElementById("blok").value = "Blok AC";
-    btn.disabled = false;
-    btn.innerText = "Simpan Log";
+  .then(res => res.text())
+  .then(txt => {
+    alert(txt === 'OK' ? '✅ Berhasil masuk Sheet!' : '❌ Gagal: ' + txt);
+    if(txt === 'OK') {
+      this.reset();
+      document.getElementById("reader").innerHTML = ""; // kosongin scan
+    }
   })
- .catch(() => {
-    alert("❌ Gagal simpan. Cek internet/link Apps Script");
-    btn.disabled = false;
-    btn.innerText = "Simpan Log";
-  });
+  .catch(err => alert('Error koneksi: ' + err));
 });
 </script>
 </body>
