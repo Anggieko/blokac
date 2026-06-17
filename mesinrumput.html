@@ -3,241 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Mesin Rumput RW05</title>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<title>Log Pemakaian Mesin</title>
+<script src="https://unpkg.com/html5-qrcode"></script>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, sans-serif; }
   body {
-    min-height: 100vh;
-    background: url('bg.png') no-repeat center fixed;
-    background-size: cover;
-    padding: 20px;
-    color: #fff;
-    padding-bottom: 100px;
+    min-height:100vh;
+    background: url('bg.png') no-repeat center/cover;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
   }
-  .card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
+ .glass {
+    width:100%; max-width:380px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(20px);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:25px;
+    padding:25px 20px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    color:#fff;
   }
-  h2 { text-align: center; margin-bottom: 15px; font-size: 18px; }
-  input, button {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    outline: none;
+  h2 {
+    text-align:center; margin-bottom:20px;
+    font-size:18px; font-weight:600;
   }
   input {
-    background: rgba(255,255,255,0.9);
-    color: #333;
+    width:100%; padding:14px; margin:8px 0;
+    border:none; border-radius:12px;
+    background:rgba(255,255,255,0.9);
+    color:#333; font-size:15px; outline:none;
   }
-  button {
-    background: #2196F3;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+  input::placeholder { color:#888; }
+  input[readonly] { background:rgba(255,255,255,0.7); }
+
+  #reader { display:none; margin:10px 0; border-radius:15px; overflow:hidden; }
+
+ .btn-scan {
+    width:100%; padding:14px; margin:10px 0;
+    border:none; border-radius:12px;
+    background:#ff5722; color:#fff;
+    font-weight:bold; font-size:15px;
+    cursor:pointer;
   }
-  button:active { transform: scale(0.98); }
-  .scan-btn { background: #FF5722; }
-  #reader {
-    width: 100%;
-    margin: 10px 0;
-    border-radius: 12px;
-    overflow: hidden;
-    display: none;
+ .btn-simpan {
+    width:100%; padding:14px; margin-top:5px;
+    border:none; border-radius:12px;
+    background:#2196f3; color:#fff;
+    font-weight:bold; font-size:15px;
+    cursor:pointer;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-    color: #fff;
-  }
-  th, td {
-    padding: 8px 4px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-  }
-  th { font-weight: bold; }
-  #notif {
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  .back-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.3);
+ .btn-back {
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+    padding:12px 30px; border:none; border-radius:50px;
+    background:rgba(0,0,0,0.7); color:#fff;
+    font-weight:bold; font-size:14px;
   }
 </style>
 </head>
 <body>
+  <div class="glass">
+    <h2>📋 Log Pemakaian Mesin</h2>
+    <form id="formLog">
+      <input id="nama" placeholder="Nama Pemakai" required>
+      <input id="blok" value="Blok AC" required>
+      <input id="hp" placeholder="Nomor HP / WA" required>
 
-<!-- CARD FORM -->
-<div class="card">
-  <h2>📋 Log Pemakaian Mesin</h2>
-  <input type="text" id="nama" placeholder="Nama Pemakai" required>
-  <input type="text" id="blok" value="Blok AC" readonly>
-  <input type="text" id="nohp" placeholder="Nomor HP / WA">
-  
-  <button class="scan-btn" onclick="startScan()">📷 Scan Barcode Mesin</button>
-  <div id="reader"></div>
-  <input type="text" id="idMesin" placeholder="ID Mesin hasil scan" readonly>
+      <button type="button" class="btn-scan" onclick="mulaiScan()">📷 Scan Barcode Mesin</button>
+      <div id="reader"></div>
+      <input id="mesin" placeholder="ID Mesin hasil scan" required readonly>
 
-  <button onclick="simpanLog()">Simpan Log</button>
-  <div id="notif"></div>
-</div>
+      <button type="submit" class="btn-simpan">Simpan Log</button>
+    </form>
+  </div>
 
-<!-- CARD RIWAYAT -->
-<div class="card">
-  <h2>📋 Riwayat Pemakaian</h2>
-  <table id="tabelLog">
-    <thead>
-      <tr>
-        <th>Tanggal</th>
-        <th>Nama</th>
-        <th>Blok</th>
-        <th>No HP</th>
-        <th>Mesin</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="5">Loading...</td></tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- TOMBOL KEMBALI -->
-<button class="back-btn" onclick="history.back()">⬅ Kembali</button>
+  <button class="btn-back" onclick="history.back()">⬅️ Kembali</button>
 
 <script>
-// GANTI URL SCRIPT KAMU DISINI
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyOb2l5fRftH91bvCkVXn7yiYzMzuJvJfwt1Xca3qaIOOa8RYHoqcaNIBcPCR-VGznf/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzfwnp8ATcmgHhCn9qWFnrGLWb21u6uhf3w-DajGO1Ib2Z34gNVSeeKrYuFTd4RoiWE/exec";
+let scanner;
 
-let html5QrCode;
-
-// SCAN BARCODE
-function startScan() {
-  document.getElementById('reader').style.display = 'block';
-  
-  html5QrCode = new Html5Qrcode("reader");
-  const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-  html5QrCode.start(
-    { facingMode: "environment" }, // kamera belakang
-    config,
-    (decodedText) => {
-      document.getElementById('idMesin').value = decodedText;
-      document.getElementById('notif').innerText = '✅ Barcode kebaca: ' + decodedText;
-      stopScan();
+function mulaiScan(){
+  document.getElementById("reader").style.display = "block";
+  scanner = new Html5Qrcode("reader");
+  scanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 200 },
+    qrCodeMessage => {
+      document.getElementById("mesin").value = qrCodeMessage;
+      scanner.stop();
+      document.getElementById("reader").style.display = "none";
     },
-    (errorMessage) => {
-      // abaikan error scan, biar gak spam
-    }
-  ).catch(err => {
-    alert('Gagal buka kamera: ' + err + '\nPake Chrome + HTTPS ya bang');
-  });
+    error => {}
+  );
 }
 
-function stopScan() {
-  if(html5QrCode) {
-    html5QrCode.stop().then(() => {
-      document.getElementById('reader').style.display = 'none';
-    });
-  }
-}
+document.getElementById("formLog").addEventListener("submit", function(e){
+  e.preventDefault();
+  let btn = document.querySelector(".btn-simpan");
+  btn.disabled = true;
+  btn.innerText = "Menyimpan...";
 
-// SIMPAN LOG
-function simpanLog() {
-  const data = {
-    nama: document.getElementById('nama').value,
-    namaBlok: document.getElementById('blok').value,
-    nohp: document.getElementById('nohp').value,
-    idMesin: document.getElementById('idMesin').value || 'BELUM SCAN'
+  let data = {
+    nama: document.getElementById("nama").value,
+    blok: document.getElementById("blok").value,
+    hp: document.getElementById("hp").value,
+    mesin: document.getElementById("mesin").value
   };
 
-  if(!data.nama) {
-    document.getElementById('notif').innerText = '⚠ Nama wajib diisi';
-    return;
-  }
-
-  document.getElementById('notif').innerText = 'Menyimpan...';
-
   fetch(URL_SCRIPT, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
-  .then(res => {
-    if(res.status == "OK") {
-      document.getElementById('notif').innerText = '✅ Berhasil disimpan';
-      document.getElementById('nama').value = '';
-      document.getElementById('nohp').value = '';
-      document.getElementById('idMesin').value = '';
-      loadLog();
-    } else {
-      document.getElementById('notif').innerText = '❌ Gagal: ' + res.pesan;
-    }
+ .then(res => res.json())
+ .then(() => {
+    alert("✅ data udah tersimpan mesin di jaga ya");
+    document.getElementById("formLog").reset();
+    document.getElementById("blok").value = "Blok AC";
+    btn.disabled = false;
+    btn.innerText = "Simpan Log";
   })
-  .catch(err => {
-    document.getElementById('notif').innerText = '❌ Gagal simpan: ' + err;
+ .catch(() => {
+    alert("❌ Gagal simpan. Cek internet/link Apps Script");
+    btn.disabled = false;
+    btn.innerText = "Simpan Log";
   });
-}
-
-// LOAD RIWAYAT
-function loadLog(){
-fetch(URL_SCRIPT)
-.then(res => res.text()) // ganti .json() jadi .text() kalo pake CSV
-.then(csv => {
-  let tbody = document.querySelector("#tabelLog tbody");
-  tbody.innerHTML = "";
-  let rows = csv.split("\n").slice(1);
-  rows.forEach(r => {
-    if(r.trim()!="") tbody.innerHTML += `<tr><td>${r.replace(/,/g,"</td><td>")}</td></tr>`;
-  });
-})
-
-  fetch(URL_SCRIPT)
-  .then(res => res.json())
-  .then(data => {
-    let tbody = document.querySelector("#tabelLog tbody");
-    tbody.innerHTML = "";
-
-    if(data.length == 0) {
-      tbody.innerHTML = "<tr><td colspan='5'>Belum ada data</td></tr>";
-      return;
-    }
-
-    data.forEach(row => {
-      let tgl = new Date(row.tanggal).toLocaleString('id-ID');
-      tbody.innerHTML += `
-        <tr>
-          <td>${tgl}</td>
-          <td>${row.nama}</td>
-          <td>${row.namaBlok}</td>
-          <td>${row.nohp}</td>
-          <td>${row.idMesin}</td>
-        </tr>
-      `;
-    });
-  })
-  .catch(err => {
-    document.querySelector("#tabelLog tbody").innerHTML = "<tr><td colspan='5'>Gagal load: " + err + "</td></tr>";
-  });
-}
-
-loadLog();
+});
 </script>
 </body>
 </html>
