@@ -103,17 +103,21 @@ h3{
 
       let html = '';
       rows.reverse().forEach(row => {
-        let col = row.split(',');
-        let tanggal = col[0]; // kolom A = tanggal
-        let linkPdf = col[2]; // kolom C = link download pdf
+  let col = row.split(',');
+  let tanggal = col[0]; // kolom 1 = Tanggal
+  let judul = col[1]; // kolom 2 = Judul Rapat
+  let linkPdf = col[2]; // kolom 3 = Link PDF
 
-        if(tanggal && linkPdf){
-          html += `<div class="item">
-            <div class="tgl">📅 Rapat ${tanggal}</div>
-            <a class="btn" href="${linkPdf}" target="_blank">⬇️ Download PDF</a>
-          </div>`;
-        }
-      });
+  if(tanggal && linkPdf){
+    // Kalau judul kosong, fallback ke "Rapat [tanggal]"
+    let namaFile = judul? judul : `Rapat ${tanggal}`;
+
+    html += `<div class="item">
+      <div class="tgl">📅 ${namaFile}</div>
+      <a class="btn" href="${linkPdf}" target="_blank">⬇️ Download PDF</a>
+    </div>`;
+  }
+});
       div.innerHTML = html;
     })
  .catch(err => {
