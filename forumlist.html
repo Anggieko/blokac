@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Menu Notulensi</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      margin:0;
+      padding:20px 20px 100px 20px;
+      font-family:sans-serif;
+      min-height:100vh;
+      background:url('bg.png') no-repeat center fixed;
+      background-size:cover;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .container{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:15px;
+      max-width:900px;
+      width:100%;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.3);
+      border-radius:20px;
+      padding:30px 15px;
+      text-align:center;
+      text-decoration:none;
+      color:white;
+      box-shadow:0 8px 32px 0 rgba(31,38,135,0.2);
+      transition:transform 0.2s;
+    }
+    .card:active{transform:scale(0.95)}
+
+    .icon{font-size:40px;margin-bottom:10px}
+    .title{font-weight:bold;font-size:16px}
+
+    .back-btn{
+      position:fixed;
+      bottom:25px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,0.4);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.3);
+      color:white;
+      padding:12px 28px;
+      border-radius:50px;
+      text-decoration:none;
+      font-weight:bold;
+      font-size:15px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      transition:transform 0.2s;
+    }
+    .back-btn:active{transform:translateX(-50%) scale(0.95)}
+
+    @media(max-width:600px){
+      .container{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="card" href="arsip.html">
+      <div class="icon">📁</div>
+      <div class="title">Arsip Notulensi</div>
+    </a>
+
+    <a class="card" href="rapat.html">
+      <div class="icon">📝</div>
+      <div class="title">Catatan Rapat</div>
+    </a>
+
+    <a class="card" href="daftarhadir.html">
+      <div class="icon">👥</div>
+      <div class="title">Daftar Hadir</div>
+    </a>
+  </div>
+
+  <!-- TOMBOL KEMBALI KE MENU -->
+  <a class="back-btn" href="menuu.html">kembali</a>
+</body>
+</html>

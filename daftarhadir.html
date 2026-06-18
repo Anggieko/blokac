@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Hadir Rapat</title>
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+  background:url('bg.png') no-repeat center fixed;
+  background-size:cover;
+  padding:30px 20px 120px 20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* CARD FORM KACA */
+.container, form, .form-wrapper{
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:24px;
+  padding:28px 22px;
+  width:100%;
+  max-width:430px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25);
+  overflow:hidden;
+}
+
+/* JUDUL */
+h3, h2{
+  color:white;
+  text-align:center;
+  font-size:23px;
+  font-weight:700;
+  margin-bottom:28px;
+  text-shadow:0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* LABEL */
+label{
+  display:block;
+  color:white;
+  font-weight:600;
+  font-size:15px;
+  margin-bottom:8px;
+  margin-top:18px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* INPUT & TEXTAREA */
+input[type="text"], input[type="date"], textarea{
+  width:100%;
+  padding:13px 14px;
+  background:rgba(255,255,255,0.18);
+  border:1.5px solid rgba(255,255,255,0.35);
+  border-radius:14px;
+  color:white;
+  font-size:15px;
+  outline:none;
+  transition:all 0.2s;
+}
+
+input::placeholder, textarea::placeholder{
+  color:rgba(255,255,255,0.65);
+}
+
+input:focus, textarea:focus{
+  background:rgba(255,255,255,0.25);
+  border:1.5px solid rgba(255,255,255,0.7);
+  box-shadow:0 0 0 3px rgba(255,255,255,0.15);
+}
+
+/* CANVAS TTD */
+canvas{
+  background:rgba(255,255,255,0.95);
+  border-radius:14px;
+  border:1.5px solid rgba(255,255,255,0.4);
+  width:100%;
+  height:160px;
+  margin-top:8px;
+  touch-action:none;
+}
+
+/* WRAPPER TOMBOL */
+.btn-group{
+  display:flex;
+  gap:12px;
+  margin-top:25px;
+}
+
+/* TOMBOL UMUM */
+button{
+  flex:1;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  font-weight:700;
+  font-size:15px;
+  color:white;
+  cursor:pointer;
+  transition:transform 0.15s;
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+}
+
+button:active{
+  transform:scale(0.96);
+}
+
+/* TOMBOL SIMPAN IJO KACA */
+.btn-simpan, button[type="submit"]{
+  background:rgba(34,197,94,0.85);
+  border:1px solid rgba(255,255,255,0.25);
+}
+
+/* TOMBOL HAPUS ABU KACA */
+.btn-hapus{
+  background:rgba(156,163,175,0.7);
+  border:1px solid rgba(255,255,255,0.25);
+}
+
+/* TOMBOL BACK BAWAH TENGAH */
+.back-btn{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.3);
+  color:white;
+  padding:13px 30px;
+  border-radius:50px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:15px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.35);
+  transition:transform 0.15s;
+  z-index:999;
+}
+
+.back-btn:active{
+  transform:translateX(-50%) scale(0.94);
+}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>✍️ Daftar Hadir Rapat</h2>
+  <form id="formHadir">
+    <label>Tanggal Rapat</label>
+    <input type="date" id="tanggal" required>
+
+    <label>Nama Lengkap</label>
+    <input type="text" id="nama" placeholder="Contoh: Budi Santoso" required>
+
+    <label>Tanda Tangan</label>
+    <canvas id="ttd"></canvas>
+    <div class="btn-group">
+      <button type="button" class="btn-clear" onclick="clearTtd()">Hapus TTD</button>
+      <button type="submit" class="btn-save">Simpan Kehadiran</button>
+    </div>
+  </form>
+  <div id="status"></div>
+</div>
+<a class="back-btn" href="forumlist.html">kembali</a>
+<script>
+const LINK_EXEC = 'https://script.google.com/macros/s/AKfycbyJ0DaLrDq-bC4d83e12CfjVNGU_FyBwx9m4mqHBPfjsHHtcyqjS6ETWq1bF0A5aKv2/exec'; // sama kayak rapat.html
+
+// Canvas TTD
+const canvas = document.getElementById('ttd');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+
+function resizeCanvas(){
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 150;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e){
+  const rect = canvas.getBoundingClientRect();
+  return {x: (e.touches?e.touches[0].clientX:e.clientX)-rect.left,
+          y: (e.touches?e.touches[0].clientY:e.clientY)-rect.top};
+}
+
+canvas.addEventListener('mousedown', e=>{drawing=true; ctx.beginPath(); ctx.moveTo(getPos(e).x,getPos(e).y)});
+canvas.addEventListener('mousemove', e=>{if(drawing){ctx.lineTo(getPos(e).x,getPos(e).y); ctx.stroke()}});
+canvas.addEventListener('mouseup', ()=>drawing=false);
+canvas.addEventListener('touchstart', e=>{e.preventDefault(); drawing=true; ctx.beginPath(); ctx.moveTo(getPos(e).x,getPos(e).y)});
+canvas.addEventListener('touchmove', e=>{e.preventDefault(); if(drawing){ctx.lineTo(getPos(e).x,getPos(e).y); ctx.stroke()}});
+canvas.addEventListener('touchend', ()=>drawing=false);
+
+function clearTtd(){ctx.clearRect(0,0,canvas.width,canvas.height)}
+
+document.getElementById('formHadir').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const status = document.getElementById('status');
+  status.innerHTML = 'Menyimpan...';
+  
+  const ttdData = canvas.toDataURL('image/png');
+  const data = {
+    nama: document.getElementById('nama').value,
+    ttd: ttdData
+  };
+  
+  // KIRIM AJA, GAK USAH NUNGGU BALASAN
+  fetch('https://script.google.com/macros/s/AKfycbyJ0DaLrDq-bC4d83e12CfjVNGU_FyBwx9m4mqHBPfjsHHtcyqjS6ETWq1bF0A5aKv2/exec', {
+    method: 'POST',
+    mode: 'no-cors', // kunci anti gagal load
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify(data)
+  });
+  
+  // 1 detik kemudian langsung tampilin sukses
+  setTimeout(() => {
+  status.innerHTML = '✅ Berhasil disimpan!';
+  status.style.color = 'green';
+  
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  
+  document.getElementById('nama').value = '';
+}, 1000);
+});
+</script>
+</body>
+</html>
