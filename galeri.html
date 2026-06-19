@@ -233,5 +233,8 @@ async function upload() {
   <div class="spinner"></div>
   <div id="loadingText">Mengirim foto...</div>
 </div>
+<script>
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js');
+</script>
 </body>
 </html>
