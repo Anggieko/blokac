@@ -83,20 +83,25 @@ button:disabled{background:gray}
 }
 
 /* TOMBOL BACK TENGAH BAWAH */
-.btn-back{
+.back-btn{
   position:fixed;
   bottom:25px;
   left:50%;
   transform:translateX(-50%);
-  padding:14px 20px;
-  background:rgba(255,255,255,0.15);
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.3);
   color:white;
-  border:1px solid rgba(255,255,255,0.25);
-  border-radius:15px;
-  transition:all 0.2s;
+  padding:12px 28px;
+  border-radius:50px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:15px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  transition:transform 0.2s;
 }
-}
-.btn-back:active{transform:translateX(-50%) scale(0.95)}
+.back-btn:active{transform:translateX(-50%) scale(0.95)}
 </style>
 </head>
 <body>
@@ -117,7 +122,7 @@ button:disabled{background:gray}
 <div id="listFolder">Loading daftar event...</div>
 </div>
 
-<button class="btn-back" onclick="history.back()">⬅ Kembali</button>
+<a class="back-btn" href="forumlist.html">kembali</a>
 
 <script>
 const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyH-XWTWe2_oI7ecU8qLBa1ksXH7gkYDF61wzGdir7mk77HkQTJibwD5tmbBabAaSEz8w/exec'; // GANTI INI
