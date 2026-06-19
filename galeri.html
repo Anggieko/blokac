@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeri Blok AC</title>
+<style>
+* {margin:0;padding:0;box-sizing:border-box}
+
+body{
+  min-height:100vh;
+  background:url('bg.png') no-repeat center fixed;
+  background-size:cover;
+  font-family:'Segoe UI',Arial;
+  padding:20px 20px 100px 20px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+
+.card{
+  width:100%;
+  max-width:600px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:20px;
+  padding:25px;
+  color:#fff;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+h2{text-align:center;margin-bottom:20px;font-size:22px}
+h3{margin-top:30px;margin-bottom:15px;font-size:18px}
+
+label{display:block;margin-top:15px;font-weight:bold;font-size:14px}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.9);
+  margin-top:5px;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,#007bff,#00a6ff);
+  color:white;
+  font-weight:bold;
+  font-size:16px;
+  cursor:pointer;
+}
+button:disabled{background:gray}
+
+#status{margin-top:15px;text-align:center;font-weight:bold;min-height:25px;font-size:14px}
+
+/* LIST FOLDER GLASS CARD */
+#listFolder{display:flex;flex-direction:column;gap:12px}
+.folder-card{
+  padding:18px;
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:15px;
+  transition:all 0.2s;
+}
+.folder-card a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:16px;
+  display:block;
+}
+.folder-card:hover{
+  background:rgba(255,255,255,0.25);
+  transform:translateY(-2px);
+}
+
+/* TOMBOL BACK TENGAH BAWAH */
+.btn-back{
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:14px 20px;
+  background:linear-gradient(135deg,#ff3b30,#ff5e3a);
+  color:white;
+  border:none;
+  border-radius:50px;
+  font-weight:bold;
+  font-size:16px;
+  box-shadow:0 8px 20px rgba(255,59,48,0.4);
+  cursor:pointer;
+  z-index:999;
+}
+.btn-back:active{transform:translateX(-50%) scale(0.95)}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>📸 Galeri Blok AC</h2>
+
+<label>Nama Event Baru:</label>
+<input type="text" id="namaEvent" placeholder="Contoh: logo ac">
+
+<label>Pilih Foto:</label>
+<input type="file" id="gambarInput" multiple accept="image/*">
+
+<button id="btnUpload" onclick="upload()">Upload Foto</button>
+<div id="status"></div>
+
+<h3>📁 Daftar Event:</h3>
+<div id="listFolder">Loading daftar event...</div>
+</div>
+
+<button class="btn-back" onclick="history.back()">⬅ Kembali</button>
+
+<script>
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyH-XWTWe2_oI7ecU8qLBa1ksXH7gkYDF61wzGdir7mk77HkQTJibwD5tmbBabAaSEz8w/exec'; // GANTI INI
+
+window.onload = loadFolder;
+
+function loadFolder() {
+  const div = document.getElementById('listFolder');
+  div.innerHTML = 'Loading...';
+
+  window.showFolder = function(folders) {
+    if(folders.length == 0) return div.innerHTML = 'Belum ada event. Upload foto pertama';
+    div.innerHTML = '';
+    folders.forEach(f => {
+      // LINK POLOSAN + USP SHARING BIAR GA KE APPS
+      div.innerHTML += `
+        <div class="folder-card">
+          <a href="${f.link}?usp=sharing" target="_blank">📁 ${f.nama}</a>
+        </div>
+      `;
+    });
+  }
+
+  const s = document.createElement('script');
+  s.src = URL_SCRIPT + '?callback=showFolder';
+  document.body.appendChild(s);
+  s.remove();
+}
+
+async function upload() {
+  const event = document.getElementById('namaEvent').value.trim();
+  const files = document.getElementById('gambarInput').files;
+  const status = document.getElementById('status');
+  const btn = document.getElementById('btnUpload');
+
+  if(!event) return alert('Isi nama event dulu bang');
+  if(files.length == 0) return alert('Pilih foto dulu');
+
+  btn.disabled = true;
+  for(let i=0; i<files.length; i++) {
+    status.innerHTML = `Upload ${i+1}/${files.length}...`;
+    await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const fd = new FormData();
+        fd.append('file', e.target.result.split(',')[1]);
+        fd.append('event', event);
+        fd.append('namaFile', event + '_' + Date.now() + '_' + files[i].name);
+        fd.append('mimeType', files[i].type);
+        fetch(URL_SCRIPT, {method:'POST', body:fd, mode:'no-cors'}).then(() => resolve());
+      };
+      reader.readAsDataURL(files[i]);
+    });
+  }
+  status.innerHTML = '✅ Selesai! Refresh...';
+  btn.disabled = false;
+  document.getElementById('gambarInput').value = '';
+  document.getElementById('namaEvent').value = '';
+  setTimeout(loadFolder, 2000);
+}
+</script>
+</body>
+</html>
