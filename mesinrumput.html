@@ -66,6 +66,52 @@ button{
 @keyframes scaleIn{from{transform:scale(0.8)}to{transform:scale(1)}}
 .popup-box h3{font-size:22px;margin-bottom:10px}
 .popup-box p{opacity:0.9;margin-bottom:20px}
+/* CARD TABEL LOG */
+.card-log{
+  max-width:900px;
+  overflow-x:auto; /* biar bisa geser ke samping kalo kolom banyak */
+}
+.card-log h3{text-align:center;margin-bottom:15px}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  min-width:500px;
+}
+th,td{
+  padding:10px 8px;
+  text-align:left;
+  vertical-align:top; /* rata atas biar rapi */
+  border-bottom:1px solid rgba(255,255,255,0.12);
+  word-wrap:break-word; /* pecah kata kalo kepanjangan */
+  white-space:normal; /* wrap otomatis */
+}
+
+/* KOLOM TANGGAL BIAR GA LEBAR BANGET */
+td:nth-child(1), th:nth-child(1){
+  white-space:nowrap; /* tanggal jangan di wrap */
+  width:110px;
+}
+
+/* HEADER NEMPEL PAS SCROLL */
+th{
+  background:rgba(0,0,0,0.3);
+  backdrop-filter:blur(10px);
+  font-weight:bold;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+/* ZEBRA STRIP Biar gampang bedain baris */
+tr:nth-child(even) td{
+  background:rgba(255,255,255,0.05);
+}
+tr:hover td{
+  background:rgba(255,255,255,0.12);
+  transition:0.2s;
+}
 </style>
 </head>
 <body>
@@ -84,9 +130,7 @@ button{
     <button type="submit" class="btn-save">Simpan Log</button>
   </form>
   
-  <div style="text-align:center">
-<button class="btn-back" onclick="window.location.href='peralatan.html'">⬅️ Kembali</button>
-  </div>
+
 </div>
 
 <!-- POPUP SUKSES -->
@@ -97,6 +141,16 @@ button{
     <button class="btn-save" onclick="tutupPopup()">OK</button>
   </div>
 </div>
+<br>
+<div class="card card-log">
+<h3>📋 Log Terbaru</h3>
+<div id="tabelLog">Loading data...</div>
+</div>
+
+  <div style="text-align:center">
+<button class="btn-back" onclick="window.location.href='peralatan.html'">⬅️ Kembali</button>
+  </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
@@ -133,6 +187,37 @@ document.getElementById('f').onsubmit = async e=>{
 function tutupPopup(){
   document.getElementById('popup').classList.remove('show');
 }
+</script>
+<script>
+// LINK CSV DARI GOOGLE SHEET LU - PUBLISH DULU
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1jQ3GzwVjjc1um7jMxfOAMh8g3ohPWHJ3mzr1lDpAQgLN27cnJPdhHYJFgulbcx2ZVPlPQHuYx1fE/pub?gid=0&single=true&output=csv';
+
+// LOAD TABEL OTOMATIS PAS BUKA HALAMAN
+fetch(CSV_URL)
+.then(res => res.text())
+.then(csv => {
+  const rows = csv.split('\n').filter(r => r.trim() != ''); // buang baris kosong
+  let html = '<table>';
+  rows.forEach((row, i) => {
+    // split CSV yg bener, handle koma di dalam kutip
+    const cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || row.split(',');
+    html += '<tr>';
+    cols.forEach((cell, idx) => {
+      cell = cell.replace(/"/g, '').trim(); // buang kutip + spasi
+      html += i == 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</table>';
+  document.getElementById('tabelLog').innerHTML = html;
+})
+.catch(err => {
+  document.getElementById('tabelLog').innerHTML = 'Gagal load data';
+});
+
+// FUNCTION LU YG LAMA TETEP DISINI
+function scanBarcode(){ alert('Panggil scanner lu disini') }
+function simpanLog(){ alert('Simpan ke sheet lu disini') }
 </script>
 </body>
 </html>
