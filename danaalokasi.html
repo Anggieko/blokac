@@ -114,29 +114,29 @@ table{
   width:100%;
   border-collapse:collapse;
   font-size:14px;
-  table-layout:fixed; /* biar kolom rata */
+  table-layout:fixed;
 }
 
 th, td{
   padding:10px 6px;
-  word-wrap:break-word; /* pecah kata kalo kepanjangan */
+  word-wrap:break-word;
   overflow-wrap:anywhere;
 }
 
-th:nth-child(1), td:nth-child(1){ width:35% } /* Kategori */
-th:nth-child(2), td:nth-child(2){ width:20%; text-align:center } /* Persentase */
-th:nth-child(3), td:nth-child(3){ width:45%; text-align:right } /* Nominal rata kanan */
+th:nth-child(1), td:nth-child(1){ width:35% }
+th:nth-child(2), td:nth-child(2){ width:20%; text-align:center }
+th:nth-child(3), td:nth-child(3){ width:45%; text-align:right }
 
 td:nth-child(3){
   font-weight:700;
-  white-space:nowrap; /* biar Rp ga misah dari angkanya */
-  font-size:13px; /* kecilin dikit biar muat */
+  white-space:nowrap;
+  font-size:13px;
 }
 
 .badge{
   padding:4px 6px;
   border-radius:8px;
-  font-size:11px; /* kecilin dikit */
+  font-size:11px;
   font-weight:700;
   display:inline-block;
   white-space:nowrap;
@@ -194,7 +194,7 @@ canvas{max-height:280px}
       <div class="value" id="kas">Loading...</div>
       <div class="sumber">📝 Sumber: Iuran warga Blok AC bulanan</div>
     </div>
-
+<!--
     <div class="card-income lain">
       <div class="label">TOTAL INCOME LAINNYA</div>
       <div class="value" id="lainnya">Loading...</div>
@@ -205,7 +205,7 @@ canvas{max-height:280px}
       <div class="label">TOTAL INCOME</div>
       <div class="value" id="total">Loading...</div>
       <div class="sumber">💰 Total Gabungan Dana</div>
-    </div>
+    </div>-->
   </div>
 
   <!-- TABEL ALOKASI -->
@@ -227,7 +227,7 @@ canvas{max-height:280px}
 <div class="card">
   <h2>ADART</h2>
   <div class="adart-note">* NOTE</div>
-  
+
   <div class="adart-section">SOSIAL</div>
   <div class="adart-row">
     <span>menikah/ spesial moment</span>
@@ -250,7 +250,7 @@ canvas{max-height:280px}
   <div class="transfer-title">TRANSFER KE REKENING KHUS BLOK AC</div>
   <div class="transfer-norek">007264620425</div>
   <div class="transfer-bank">BCA Digital • a/n fikry aliyansyah Kusuma</div>
-  
+
   <button class="btn-copy" onclick="copyRek()">📋 Salin Data Transfer</button>
   <div class="transfer-catatan">Catatan: tulis no rumah + iuran apa</div>
 </div>
@@ -259,26 +259,22 @@ canvas{max-height:280px}
   <button class="btn" onclick="window.location.href='iuran1.html?v='+Date.now()">← Kembali</button>
 </div>
 
-
 </div>
 
 <script>
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=1308896656&single=true&output=csv';
 
-// 1,244,200.00 -> 1244200.00
 function parseAngka(str){
   if(!str) return 0;
   str = String(str).replace(/Rp/g,'').replace(/\s/g,'').trim();
-  
-  // Kalo ada titik DAN koma: 1,244,200.00 format US
+
   if(str.includes('.') && str.includes(',')){
-    str = str.replace(/,/g,''); // hapus semua koma
+    str = str.replace(/,/g,'');
   }
-  // Kalo cuma ada koma: 1.244.200,50 format ID  
-  else if(str.includes(',') && !str.includes('.')){
+  else if(str.includes(',') &&!str.includes('.')){
     str = str.replace(/\./g,'').replace(',', '.');
   }
-  
+
   return parseFloat(str) || 0;
 }
 function formatRupiah(angka){
@@ -300,7 +296,6 @@ async function loadData(){
     const text = await res.text();
     const lines = text.split('\n');
 
-    // Baris 4-7: alokasi, Baris 10-12: total
     const sosial = parseAngka(ambilNilai(lines[3]));
     const infra = parseAngka(ambilNilai(lines[4]));
     const darurat = parseAngka(ambilNilai(lines[5]));
@@ -310,10 +305,15 @@ async function loadData(){
     const lainnya = parseAngka(ambilNilai(lines[10]));
     const total = parseAngka(ambilNilai(lines[11]));
 
-    // Isi 3 card besar
-    document.getElementById('kas').textContent = formatRupiah(kas);
-    document.getElementById('lainnya').textContent = formatRupiah(lainnya);
-    document.getElementById('total').textContent = formatRupiah(total);
+    // Isi 3 card besar - PAKE IF BIAR GA ERROR KALO DIHIDE
+    if(document.getElementById('kas'))
+      document.getElementById('kas').textContent = formatRupiah(kas);
+
+    if(document.getElementById('lainnya'))
+      document.getElementById('lainnya').textContent = formatRupiah(lainnya);
+
+    if(document.getElementById('total'))
+      document.getElementById('total').textContent = formatRupiah(total);
 
     // Data alokasi
     const data = [
