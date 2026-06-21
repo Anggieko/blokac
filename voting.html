@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Voting Humas Warga</title>
+  <!-- Menggunakan Tailwind CSS versi terbaru -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    /* Menggunakan background gambar bg.png sesuai permintaan */
+    body {
+      background-image: url('bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    /* Efek Kaca Transparan (Glassmorphism) */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen pt-6 pb-28 px-4 font-sans text-gray-800">
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Header Utama (Glassmorphism) -->
+    <div class="glass-card p-6 rounded-3xl text-center mb-8 shadow-xl">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">🗳️ Pemilihan Humas Baru</h1>
+      <p class="text-xs md:text-sm text-gray-700 font-medium mt-1">Suara Anda Menentukan Masa Depan Lingkungan Kita</p>
+    </div>
+
+    <!-- Navigasi Menu Atas (Style Glass) -->
+    <div class="glass-nav p-2 rounded-2xl flex justify-center gap-1.5 md:gap-3 mb-8 shadow-md">
+      <button id="btn-1" onclick="switchTab(1)" class="px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm bg-blue-600 text-white">1. Pengajuan</button>
+      <button id="btn-2" onclick="switchTab(2)" class="px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm text-gray-700 hover:bg-white/50">2. Voting Token</button>
+      <button id="btn-3" onclick="switchTab(3)" class="px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm text-gray-700 hover:bg-white/50">3. Rekap Hasil</button>
+    </div>
+
+    <!-- ================= 1. HALAMAN PENGAJUAN CALON ================= -->
+    <div id="tab-1" class="block space-y-8">
+      <div class="glass-card p-6 rounded-3xl shadow-xl max-w-xl mx-auto">
+        <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">✍️ Formulir Pengajuan Calon</h2>
+        <form id="form-pengajuan" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">No. Rumah / Blok Pengaju</label>
+            <input type="text" id="input-blok" required class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Contoh: AC01 atau 20">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Nama Calon Yang Diajukan</label>
+            <input type="text" id="input-calon" required class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Nama lengkap calon...">
+          </div>
+          <button type="submit" id="btn-submit-pengajuan" class="w-full bg-blue-600 text-white p-3.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-md mt-2 text-sm">Ajukan Calon Baru</button>
+        </form>
+      </div>
+
+      <div>
+        <h3 class="text-md font-bold mb-4 text-gray-900 uppercase tracking-widest text-center">📋 Daftar Calon Terdaftar</h3>
+        <div id="list-pengajuan" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <p class="text-center text-gray-600 col-span-full font-medium">Memuat daftar calon...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 2. HALAMAN MENU VOTING TOKEN ================= -->
+    <div id="tab-2" class="hidden max-w-2xl mx-auto space-y-6">
+      <div class="glass-card p-6 rounded-3xl shadow-xl">
+        <h2 class="text-lg font-bold text-gray-900 mb-1">🔐 Verifikasi Kredensial Warga</h2>
+        <p class="text-xs text-gray-700 mb-4 font-medium">Masukkan Nomor Rumah dan Token untuk membuka surat suara elektronik Anda.</p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">No. Rumah</label>
+            <input type="text" id="vote-no-rumah" class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Contoh: AC01 / 20">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Token Unik</label>
+            <input type="text" id="vote-token" class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Contoh: ZW50-N38G">
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mt-6 text-center">👇 Silakan Pilih Salah Satu Kandidat:</h3>
+      <div id="list-voting" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p class="text-center text-gray-600 col-span-full font-medium">Memuat opsi surat suara...</p>
+      </div>
+    </div>
+
+    <!-- ================= 3. HALAMAN REKAPITULASI HASIL ================= -->
+    <div id="tab-3" class="hidden">
+      <div class="glass-card p-6 rounded-3xl shadow-xl max-w-2xl mx-auto">
+        <h2 class="text-lg font-bold mb-1 text-center text-gray-900">📊 Hasil Perolehan Suara Real-Time</h2>
+        <p class="text-xs text-center text-gray-700 mb-6 font-medium">Data dihitung otomatis berdasarkan verifikasi database spreadsheet.</p>
+        <div id="list-rekap" class="space-y-4">
+          <p class="text-center text-gray-600 font-medium">Memuat hasil perhitungan suara...</p>
+        </div>
+      </div>
+    </div>
+
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+      <button onclick="kembaliKeMenuAwal()" class="glass-nav px-6 py-3 rounded-full font-bold text-xs md:text-sm text-gray-900 shadow-xl hover:bg-white/80 active:scale-95 transition flex items-center gap-2 border border-white/50 bg-white/70">
+        Kembali
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- SCRIPT LOGIKA PEMPROSESAN DATA -->
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8dvwkLIKwR0vZdzK0iqO7qU_FWZeNnYvRrbhW2jRwsCKpSwl0u3LSbUHsrdILlGYViw/exec";
+    let dataSistem = { calon: [], rekap: {} };
+
+  // FUNGSI BACK BUTTON SUDAH DI SINI DENGAN AMAN
+    function kembaliKeMenuAwal() {
+      window.location.href = "forumlist.html";
+    }
+
+
+    async function muatDataSistem() {
+      try {
+        const res = await fetch(SCRIPT_URL);
+        dataSistem = await res.json();
+        renderSemuaHalaman();
+      } catch (err) {
+        console.error("Gagal sinkronisasi data:", err);
+      }
+    }
+
+    function renderSemuaHalaman() {
+      // Render Tab 1 (Daftar Pengajuan - Glass Card)
+      const containerPengajuan = document.getElementById('list-pengajuan');
+      if (dataSistem.calon.length === 0) {
+        containerPengajuan.innerHTML = `<p class="text-center text-gray-600 col-span-full font-medium bg-white/30 p-4 rounded-xl">Belum ada calon yang diajukan.</p>`;
+      } else {
+        containerPengajuan.innerHTML = dataSistem.calon.map((nama, idx) => `
+          <div class="glass-card p-5 rounded-2xl text-center shadow-md border border-white/30">
+            <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mx-auto mb-3 shadow-sm text-sm">${idx + 1}</div>
+            <h4 class="font-bold text-base text-gray-900">${nama}</h4>
+            <p class="text-[10px] text-blue-700 font-bold mt-2 bg-blue-50/60 inline-block px-2.5 py-0.5 rounded-full border border-blue-200/50">Kandidat Aktif</p>
+          </div>
+        `).join('');
+      }
+
+      // Render Tab 2 (Card Pilihan Vote - Glass Card)
+      const containerVoting = document.getElementById('list-voting');
+      if (dataSistem.calon.length === 0) {
+        containerVoting.innerHTML = `<p class="text-center text-gray-600 col-span-full font-medium bg-white/30 p-4 rounded-xl">Belum ada opsi kandidat.</p>`;
+      } else {
+        containerVoting.innerHTML = dataSistem.calon.map(nama => `
+          <div class="glass-card p-5 rounded-2xl shadow-md border border-white/30 flex flex-col justify-between hover:scale-[1.01] transition duration-200">
+            <div class="mb-4">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Calon Humas</span>
+              <h3 class="text-base font-extrabold text-gray-900 mt-0.5">${nama}</h3>
+            </div>
+            <button onclick="kirimSuaraVote('${nama}')" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold text-xs hover:bg-blue-700 shadow-md transition tracking-wide">
+              Coblos Calon Ini
+            </button>
+          </div>
+        `).join('');
+      }
+
+      // Render Tab 3 (Grafik Rekapitulasi - Glass Card Progress Bar)
+      const containerRekap = document.getElementById('list-rekap');
+      const totalSuaraMasuk = Object.values(dataSistem.rekap).reduce((a, b) => a + b, 0);
+      
+      if (dataSistem.calon.length === 0) {
+        containerRekap.innerHTML = `<p class="text-center text-gray-600 font-medium bg-white/30 p-4 rounded-xl">Belum ada data rekapitulasi.</p>`;
+      } else {
+        containerRekap.innerHTML = dataSistem.calon.map(nama => {
+          const jumlahSuara = dataSistem.rekap[nama] || 0;
+          const persentase = totalSuaraMasuk > 0 ? Math.round((jumlahSuara / totalSuaraMasuk) * 100) : 0;
+          return `
+            <div class="bg-white/50 p-4 rounded-2xl border border-white/40 shadow-xs">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-extrabold text-gray-900 text-sm">${nama}</span>
+                <span class="text-xs font-bold text-blue-700 bg-white/80 px-2 py-0.5 rounded-md border border-blue-100">${jumlahSuara} Suara (${persentase}%)</span>
+              </div>
+              <div class="w-full bg-white/40 h-2.5 rounded-full overflow-hidden border border-white/20">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-700" style="width: ${persentase}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // PENGAJUAN CALON BARU (JSONP)
+    document.getElementById('form-pengajuan').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-pengajuan');
+      const no_rumah = encodeURIComponent(document.getElementById('input-blok').value);
+      const nama_calon = encodeURIComponent(document.getElementById('input-calon').value);
+
+      btn.disabled = true;
+      btn.innerText = "Memproses Pengajuan...";
+
+      window.handlePengajuanResponse = function(response) {
+        alert("Data pengajuan calon berhasil direkam!");
+        document.getElementById('form-pengajuan').reset();
+        btn.disabled = false;
+        btn.innerText = "Ajukan Calon Baru";
+        muatDataSistem();
+        document.getElementById('jsonp-script-1').remove();
+      };
+
+      const script = document.createElement('script');
+      script.id = 'jsonp-script-1';
+      script.src = `${SCRIPT_URL}?action=tambah_calon&no_rumah=${no_rumah}&nama_calon=${nama_calon}&callback=handlePengajuanResponse`;
+      document.body.appendChild(script);
+    });
+
+        // INTERAKSI ACTION 2: PROSES COBLOS & VALIDASI TOKEN (DENGAN SAKLAR AKTIF/NON-AKTIF)
+    function kirimSuaraVote(namaPilihan) {
+      // =================================================================
+      // SAKLAR KONTROL VOTING (Ubah ke true untuk AKTIF, ubah ke false untuk MATI)
+      // =================================================================
+      const VOTING_AKTIF = true; 
+
+      // Jika saklar diatur ke false, proses voting akan langsung dikunci otomatis
+      if (!VOTING_AKTIF) {
+        alert("Mohon maaf, sesi pemungutan suara (voting) belum dibuka atau ditutup sementara selama proses pengajuan calon!");
+        return;
+      }
+
+      const no_rumah = encodeURIComponent(document.getElementById('vote-no-rumah').value.trim());
+      const token = encodeURIComponent(document.getElementById('vote-token').value.trim());
+      const pilihan = encodeURIComponent(namaPilihan);
+
+      // Proteksi awal jika form validasi di atas card pilihan belum diisi
+      if (!no_rumah || !token) {
+        alert("Silakan isi Nomor Rumah dan Token Unik Anda terlebih dahulu pada formulir di atas!");
+        return;
+      }
+
+      if (confirm(`Apakah Anda yakin ingin memberikan suara kepada "${namaPilihan}"? Tindakan ini permanen.`)) {
+        
+        window.handleVoteResponse = function(response) {
+          if (response.status === "success") {
+            alert("Suara Anda berhasil direkam di Google Sheet!");
+            document.getElementById('vote-no-rumah').value = "";
+            document.getElementById('vote-token').value = "";
+            switchTab(3); 
+          } else {
+            alert("Gagal memproses hak suara: " + response.message);
+          }
+          document.getElementById('jsonp-script-2').remove(); 
+        };
+
+        const script = document.createElement('script');
+        script.id = 'jsonp-script-2';
+        script.src = `${SCRIPT_URL}?action=vote_token&no_rumah=${no_rumah}&token=${token}&pilihan=${pilihan}&callback=handleVoteResponse`;
+        document.body.appendChild(script);
+      }
+    }
+
+
+    // Kendali Navigasi Tab Menu Menu
+    function switchTab(tabNum) {
+      for(let i = 1; i <= 3; i++) {
+        document.getElementById(`tab-${i}`).className = i === tabNum ? "block space-y-8" : "hidden";
+        document.getElementById(`btn-${i}`).className = i === tabNum 
+          ? "px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm bg-blue-600 text-white" 
+          : "px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm text-gray-700 hover:bg-white/50";
+      }
+      muatDataSistem();
+    }
+
+    // Jalankan sistem saat pertama kali dibuka
+    muatDataSistem();
+
+  </script>
+</body>
+</html>
