@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Kependudukan Warga Blok AC</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background: url('bg.png') no-repeat center center fixed; 
+            background-size: cover; 
+            margin: 0; padding: 5px; color: #fff;
+        }
+
+        /* Statistik Luar Tabel */
+        .info-header {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Card Full Screen */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 10px;
+            width: 98vw; /* Mengikuti lebar layar */
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        #searchInput { 
+            padding: 12px; border-radius: 8px; border: none; 
+            background: rgba(255,255,255,0.2); color: white; width: 100%; margin-bottom: 5px;
+        }
+
+        /* Tabel Full & Maksimal */
+        .table-container { 
+            overflow-y: auto; max-height: 75vh; 
+            background: rgba(0, 0, 0, 0.3); 
+            border-radius: 8px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th { background: rgba(0,0,0,0.5); padding: 10px; position: sticky; top: 0; text-align: left; z-index: 10; }
+        td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .footer-nav { text-align: center; margin-top: 15px; }
+        .back-btn { background: rgba(255,255,255,0.2); padding: 8px 30px; border-radius: 50px; text-decoration: none; color: white; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="info-header">
+    <strong>Status:</strong> 10/3/2026 | Terisi: 75 | PSA: 15 | Khidmat: 31 | Menetap: 62
+</div>
+
+<div class="glass-card">
+    <input type="text" id="searchInput" placeholder="Cari data warga...">
+
+    <div class="table-container">
+        <table id="tabelWarga">
+            <thead><tr id="head-row"></tr></thead>
+            <tbody id="body-rows"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="footer-nav">
+    <a href="catatansipil.html" class="back-btn">← Kembali</a>
+</div>
+
+<script>
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSysX9KjjRf4zJcntZvkaSJcqFxJxTCQkCtaM6kmCmss-7Emx-UqR8F7Cy6dLiPy15gaZRIOf4WAtyi/pub?gid=245370837&single=true&output=csv';
+
+    Papa.parse(csvUrl, {
+        download: true, header: true,
+        complete: function(results) {
+            const data = results.data;
+            Object.keys(data[0]).forEach(key => $('#head-row').append(`<th>${key}</th>`));
+            data.forEach(row => {
+                let tr = '<tr>';
+                Object.values(row).forEach(val => tr += `<td>${val || '-'}</td>`);
+                tr += '</tr>';
+                $('#body-rows').append(tr);
+            });
+        }
+    });
+
+    $("#searchInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#body-rows tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+</script>
+</body>
+</html>

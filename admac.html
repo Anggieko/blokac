@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Kependudukan Glass</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; padding: 20px; 
+            background: url('bg.png') no-repeat center center fixed; 
+            background-size: cover; color: #fff;
+        }
+        .container { max-width: 1100px; margin: auto; }
+        
+        .glass-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
+        }
+
+        .table-wrapper { width: 100%; overflow-x: auto; }
+        input { padding: 10px; border-radius: 5px; border: none; margin-bottom: 10px; }
+        button { padding: 10px 20px; background-color: #4a90e2; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 800px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid rgba(255,255,255,0.3); white-space: nowrap; }
+        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
+        tr:hover { background: rgba(255,255,255,0.1); }
+/* Menargetkan dua baris pertama (1 dan 2) sebagai baris dengan warna latar */
+tbody tr:nth-child(4n+1), 
+tbody tr:nth-child(4n+2) {
+    background-color: rgba(255, 255, 255, 0.40);
+}
+
+/* Dua baris berikutnya (3 dan 4) tetap transparan atau warna dasar */
+tbody tr:nth-child(4n+3), 
+tbody tr:nth-child(4n+4) {
+    background-color: transparent;
+}
+    /* Tombol Kembali bawah tengah - floating */
+    .back-btn {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 35px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 999;
+    }
+
+    .back-btn:active {
+      transform: translateX(-50%) scale(0.94);
+      background: rgba(255,255,255,0.3);
+    }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Data Kependudukan Warga Blok AC</h2>
+    
+    <div class="glass-box">
+        <input type="password" id="pinInput" placeholder="Masukkan PIN">
+        <button onclick="bukaData()">Unlock</button>
+        <input type="text" id="searchInput" placeholder="Cari Nama..." onkeyup="renderTable()">
+    </div>
+
+    <div class="glass-box">
+        <div class="table-wrapper" id="tabel-container">Memuat data...</div>
+    </div>
+<button class="back-btn" onclick="window.location.href='catatansipil.html'">
+  ← Kembali
+</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSysX9KjjRf4zJcntZvkaSJcqFxJxTCQkCtaM6kmCmss-7Emx-UqR8F7Cy6dLiPy15gaZRIOf4WAtyi/pub?gid=2105431829&single=true&output=csv";
+    const PIN_BENAR = "3333";
+    let rawData = [];
+    let unlocked = false;
+
+    Papa.parse(csvUrl, { 
+        download: true, 
+        header: true, 
+        skipEmptyLines: true,
+        complete: (res) => { 
+            rawData = res.data; 
+            renderTable(); 
+        } 
+    });
+
+    function renderTable() {
+        const container = document.getElementById('tabel-container');
+        if (rawData.length === 0) return;
+        
+        const filter = document.getElementById('searchInput').value.toLowerCase();
+        
+        // Ambil header asli dari data pertama agar tidak salah panggil nama kolom
+        const allHeaders = Object.keys(rawData[0]);
+        // Filter agar kolom 'Keterangan' tidak masuk (case insensitive)
+        const headers = allHeaders.filter(h => h.toLowerCase() !== 'keterangan');
+        const filtered = rawData.filter(r => {
+            const nama = (r['NAMA'] || '').toLowerCase();
+            const noRumah = (r['no rumah'] || '').toLowerCase();
+            const searchTerm = filter.toLowerCase();
+// Pencarian super fleksibel (mengabaikan spasi dan huruf besar/kecil)
+const namaClean = (r['NAMA'] || '').toLowerCase().replace(/\s+/g, '');
+const noRumahClean = (r['no rumah'] || '').toLowerCase().replace(/\s+/g, '');
+const searchClean = filter.toLowerCase().replace(/\s+/g, '');
+
+return namaClean.includes(searchClean) || noRumahClean.includes(searchClean);
+
+
+            
+            // Mencari di kolom NAMA ATAU kolom no rumah
+            return nama.includes(searchTerm) || noRumah.includes(searchTerm);
+        });
+
+
+        let html = '<table><thead><tr>';
+        headers.forEach(h => html += `<th>${h}</th>`);
+        html += '</tr></thead><tbody>';
+
+        filtered.forEach(row => {
+            html += '<tr>';
+            headers.forEach(h => {
+                let val = row[h] || '-';
+                // Sembunyikan jika NO KK atau NIK
+                if (!unlocked && (h.toUpperCase().includes('NO KK') || h.toUpperCase().includes('NIK'))) {
+                    val = '••••••••';
+                }
+                html += `<td>${val}</td>`;
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function bukaData() {
+        if (document.getElementById('pinInput').value === PIN_BENAR) {
+            unlocked = true;
+            renderTable();
+        } else {
+            alert("PIN Salah!");
+        }
+    }
+</script>
+</body>
+</html>

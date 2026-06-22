@@ -3,411 +3,376 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistem Voting Humas Warga</title>
-  <!-- Menggunakan Tailwind CSS -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <title>E-Voting Multi-Jabatan Warga</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     body {
-      background-image: url('bg.png');
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('bg.png') no-repeat center center fixed;
       background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
     }
-    /* Efek Kaca Transparan (Glassmorphism) */
-    .glass-card {
-      background: rgba(255, 255, 255, 0.45);
+    .blur-card {
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
     }
-    .glass-nav {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+    .card-kandidat {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .card-kandidat.selected {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+      transform: scale(1.02);
+      box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+    }
+ .back-btn{
+      position:fixed;
+      bottom:25px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,0.4);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.3);
+      color:white;
+      padding:12px 28px;
+      border-radius:50px;
+      text-decoration:none;
+      font-weight:bold;
+      font-size:15px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      transition:transform 0.2s;
+    }
+    .back-btn:active{transform:translateX(-50%) scale(0.95)}
+
+
   </style>
 </head>
-<body class="min-h-screen pt-6 pb-28 px-4 font-sans text-gray-800">
+<body class="text-slate-800 min-h-screen flex flex-col items-center p-4">
 
-  <div class="max-w-4xl mx-auto">
-    <!-- Header Utama -->
-    <div class="glass-card p-6 rounded-3xl text-center mb-8 shadow-xl">
-      <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">🗳️ Pemilihan Humas Baru</h1>
-      <p class="text-xs md:text-sm text-gray-700 font-medium mt-1">Suara Anda Menentukan Masa Depan Lingkungan Kita</p>
-    </div>
+  <!-- OVERLAY LOADING GLOBAL -->
+  <div id="loading-overlay" class="fixed inset-0 bg-black/60 z-50 flex flex-col items-center justify-center text-white font-medium gap-3">
+    <i class="fas fa-circle-notch fa-spin text-4xl text-blue-400"></i>
+    <span id="loading-text">Menghubungkan ke sistem...</span>
+  </div>
 
-    <!-- Navigasi Menu Atas (Akan disembunyikan total jika sudah vote) -->
-    <div id="navigasi-menu-utama" class="glass-nav p-2 rounded-2xl flex justify-center gap-3 mb-8 shadow-md max-w-md mx-auto">
-      <button id="btn-1" onclick="switchTab(1)" class="w-1/2 px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm bg-blue-600 text-white">1. Tahap Pengajuan</button>
-      <button id="btn-2" onclick="switchTab(2)" class="w-1/2 px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm text-gray-700 hover:bg-white/50">2. Bilik Voting</button>
-    </div>
-
-    <!-- ================= HALAMAN 1: TAHAP PENGAJUAN CALON ================= -->
-    <div id="tab-1" class="block space-y-8">
-      <div class="glass-card p-6 rounded-3xl shadow-xl max-w-xl mx-auto">
-        <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">✍️ Formulir Pengajuan Calon</h2>
-        
-        <!-- Notifikasi jika pengajuan ditutup karena sedang masa voting -->
-        <div id="notif-pengajuan-tutup" class="hidden bg-amber-50/80 border border-amber-200 text-amber-900 p-4 rounded-xl text-xs md:text-sm font-medium mb-4">
-          🔒 <b>Pengajuan Ditutup:</b> Saat ini sedang berlangsung tahap pemungutan suara (voting). Anda tidak dapat mengajukan calon baru lagi.
-        </div>
-
-        <form id="form-pengajuan" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">No. Rumah / Blok Pengaju</label>
-            <input type="text" id="input-blok" required class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Contoh: AC01 atau 20">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Nama Calon Yang Diajukan</label>
-            <input type="text" id="input-calon" required class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Nama lengkap calon...">
-          </div>
-          <button type="submit" id="btn-submit-pengajuan" class="w-full bg-blue-600 text-white p-3.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-md mt-2 text-sm">Ajukan Calon Baru</button>
-        </form>
-      </div>
-
-      <div>
-        <h3 class="text-md font-bold mb-4 text-gray-900 uppercase tracking-widest text-center">📋 Daftar Calon Terdaftar</h3>
-        <div id="list-pengajuan" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <p class="text-center text-gray-600 col-span-full font-medium">Memuat daftar calon...</p>
-        </div>
+  <div class="w-full max-w-md my-4 flex flex-col gap-5">
+    
+    <!-- HEADER APP -->
+    <div class="blur-card rounded-3xl p-6 text-center shadow-xl border border-white/40">
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center justify-center gap-2">
+        🗳️ E-Voting Terpadu Warga
+      </h1>
+      <div id="badge-fase" class="inline-block mt-2 px-4 py-1 text-xs font-bold rounded-full bg-slate-200 text-slate-800">
+        Memuat Fase...
       </div>
     </div>
 
-    <!-- ================= HALAMAN 2: BILIK VOTING & REKAPITULASI ================= -->
-    <div id="tab-2" class="hidden max-w-2xl mx-auto space-y-8">
-      
-      <!-- Form Verifikasi Kredensial -->
-      <div id="area-verifikasi-token" class="glass-card p-6 rounded-3xl shadow-xl">
-        <h2 class="text-lg font-bold text-gray-900 mb-1">🔐 Verifikasi Kredensial Warga</h2>
-        <p class="text-xs text-gray-700 mb-4 font-medium">Masukkan Nomor Rumah dan Token untuk memunculkan kertas suara digital Anda.</p>
+    <!-- TAMPILAN FASE 1: PENGAJUAN CALON -->
+    <div id="fase-pengajuan" class="hidden space-y-4">
+      <div class="blur-card rounded-3xl p-5 shadow-xl border border-white/40">
+        <h2 class="text-sm font-black uppercase tracking-wider text-slate-700 mb-2">🚀 Usulkan Calon Pengurus</h2>
+        <p class="text-xs text-slate-600 mb-4">Warga dapat mengajukan nama kandidat terbaik untuk masuk ke bursa pemilihan secara langsung.</p>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">No. Rumah</label>
-            <input type="text" id="vote-no-rumah" class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Contoh: AC01 / 20">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Jabatan :</label>
+            <select id="form-usul-jabatan" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-sm font-medium">
+              <option value="humas">Humas</option>
+              <option value="wakil">Wakil Humas</option>
+              <option value="keamanan">Koordinator Keamanan</option>
+              <option value="bendahara">Bendahara</option>
+            </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Token Unik</label>
-            <input type="text" id="vote-token" class="w-full p-3 bg-white/70 border border-white/40 rounded-xl mt-1 outline-none focus:border-blue-500 focus:bg-white/90 transition text-sm font-medium" placeholder="Contoh: ZW50-N38G">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Calon Kandidat :</label>
+            <input type="text" id="form-usul-nama" placeholder="Masukkan nama lengkap calon" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-sm font-medium">
           </div>
+          <button onclick="prosesAjukanCalon()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow transition">
+            Kirim Pengajuan Calon
+          </button>
+
         </div>
-        <button onclick="bukaKertasSuara()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold hover:bg-slate-800 transition text-sm shadow-md">
-          Buka Surat Suara 🔍
+      </div>
+    </div>
+
+   <!-- TOMBOL BACK DI BAWAH TENGAH (FIXED & MEMILIKI LAYER TERTINGGI) -->
+  <div class="fixed bottom-8 left-0 right-0 flex justify-center z-50 px-4">
+    <a href="forumlist.html" class="blur-card rounded-full py-2.5 px-5 flex items-center gap-2 shadow-2xl border border-white/60 text-slate-800 hover:text-blue-600 transition group max-w-xs">
+      <i class="fas fa-arrow-left text-xs text-slate-600 group-hover:text-blue-600 transition"></i>
+      <span class="text-xs font-bold tracking-wide">Kembali</span>
+    </a>
+  </div>
+
+    <!-- TAMPILAN FASE 2: BILIK VOTING -->
+    <div id="fase-voting" class="hidden space-y-4">
+      <!-- BOX INPUT KREDENSIAL -->
+      <div id="box-kredensial" class="blur-card rounded-3xl p-5 shadow-xl border border-white/40 space-y-3">
+        <h2 class="text-sm font-black uppercase tracking-wider text-slate-700">🔑 Validasi Identitas Warga</h2>
+        <input type="text" id="input-no-rumah" placeholder="Nomor Rumah (Contoh: AC01)" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-sm font-medium">
+        <input type="text" id="input-token" placeholder="Masukkan Token Validasi Anda" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-sm font-mono">
+      </div>
+
+      <!-- BOX PERSENTASE PARTISIPASI -->
+      <div id="box-partisipasi-voted" class="hidden blur-card rounded-3xl p-5 shadow-xl border border-white/40 text-center space-y-3">
+        <h2 class="text-sm font-black uppercase tracking-wider text-slate-700">📊 Tingkat Partisipasi Warga</h2>
+        <div class="text-3xl font-extrabold text-blue-600" id="text-persen-partisipasi">0%</div>
+        <p class="text-xs text-slate-600 font-medium" id="text-hitung-voted">0 dari 0 rumah telah memberikan suara</p>
+        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+          <div id="bar-persen-partisipasi" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- FORM SURAT SUARA -->
+      <div id="box-form-bilik" class="blur-card rounded-3xl p-5 shadow-xl border border-white/40 space-y-6">
+        <h2 class="text-sm font-black uppercase tracking-wider text-slate-700">🗳️ Surat Suara Digital</h2>
+        <div id="container-pilihan-jabatan" class="space-y-6"></div>
+        <button onclick="prosesKirimSuaraWarga()" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-sm shadow-lg flex items-center justify-center gap-2">
+          <i class="fas fa-paper-plane"></i> Kirim Semua Pilihan Suara
         </button>
       </div>
 
-      <!-- Kertas Suara (Muncul setelah diverifikasi) -->
-      <div id="area-kandidat-voting" class="hidden space-y-4 animate-fade-in">
-        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest text-center">👇 Surat Suara Anda: Silakan Pilih Kandidat</h3>
-        <div id="list-voting" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Diisi otomatis lewat JS -->
-        </div>
+      <!-- DIALOG SELESAI -->
+      <div id="box-sudah-voted" class="hidden blur-card rounded-3xl p-8 text-center shadow-xl border border-white/40 space-y-3">
+        <div class="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xl mx-auto"><i class="fas fa-check-double"></i></div>
+        <h3 class="text-base font-bold text-slate-900">Hak Suara Anda Selesai Ditampung!</h3>
+        <p class="text-xs text-slate-500 italic">Terima kasih telah berpartisipasi dalam pemilihan.</p>
       </div>
     </div>
 
-    <!-- ================= AREA KHUSUS REKAP HASIL (Bisa berdiri mandiri di luar sistem tab) ================= -->
-    <div id="area-rekap-hasil" class="hidden glass-card p-6 rounded-3xl shadow-xl animate-fade-in space-y-6 max-w-2xl mx-auto">
-      <div class="text-center">
-        <h2 class="text-lg font-bold mb-1 text-gray-900">📊 Hasil Perolehan Suara Real-Time</h2>
-        <p class="text-xs text-gray-700 font-medium">Anda telah menggunakan hak suara Anda. Berikut adalah perkembangan data terbaru.</p>
-      </div>
-
-      <!-- RINGKASAN PERSENTASE PEMILIH DARI TOTAL 92 TOKEN -->
-      <div class="bg-white/60 border border-white/50 rounded-2xl p-4 shadow-xs grid grid-cols-2 gap-4 text-center">
-        <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
-          <span class="block text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Sudah Memilih</span>
-          <span id="stat-sudah-pilih" class="block text-xl font-extrabold text-emerald-700 mt-1">0 / 92 Warga</span>
-          <span id="pct-sudah-pilih" class="text-xs font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-md inline-block mt-1">0%</span>
-        </div>
-        <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-100">
-          <span class="block text-[11px] font-bold text-amber-800 uppercase tracking-wider">Belum Memilih</span>
-          <span id="stat-belum-pilih" class="block text-xl font-extrabold text-amber-700 mt-1">92 / 92 Warga</span>
-          <span id="pct-belum-pilih" class="text-xs font-bold bg-amber-600 text-white px-2 py-0.5 rounded-md inline-block mt-1">100%</span>
-        </div>
-        
-        <!-- Progress Bar Kehadiran Total -->
-        <div class="col-span-2 px-1 mt-1">
-          <div class="w-full bg-white/50 h-3 rounded-full overflow-hidden border border-white/20 p-0.5">
-            <div id="progress-kehadiran" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pembatas List Kandidat -->
-      <div class="space-y-4">
-        <h3 class="text-xs font-bold text-gray-600 uppercase tracking-widest pl-1">Rincian Suara Per Kandidat:</h3>
-        <div id="list-rekap" class="space-y-4">
-          <!-- Diisi otomatis lewat JavaScript -->
-        </div>
-      </div>
-    </div>
-
-    <!-- ================= TOMBOL BACK TENGAH BAWAH ================= -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-      <button onclick="kembaliKeMenuAwal()" class="glass-nav px-6 py-3 rounded-full font-bold text-xs md:text-sm text-gray-900 shadow-xl hover:bg-white/80 active:scale-95 transition flex items-center gap-2 border border-white/50 bg-white/70">
-        Kembali
-      </button>
+    <!-- TAMPILAN REKAPITULASI HASIL / DAFTAR CALON -->
+    <div id="fase-rekap" class="blur-card rounded-3xl p-5 shadow-xl border border-white/40 space-y-4">
+      <h2 class="text-sm font-black uppercase tracking-wider text-slate-700">
+        <span id="judul-rekap">📊 Daftar Kandidat Calon Terdaftar</span>
+      </h2>
+      <div id="container-daftar-calon" class="space-y-6"></div>
     </div>
 
   </div>
 
-  <!-- ================= ELEMENT LOADING OVERLAY ================= -->
-  <div id="loading-overlay" class="hidden fixed inset-0 bg-white/30 backdrop-blur-md z-50 flex flex-col items-center justify-center transition-all duration-300">
-    <div class="glass-nav p-8 rounded-3xl flex flex-col items-center shadow-2xl border border-white/50 bg-white/80 animate-bounce">
-      <svg class="animate-spin h-10 w-10 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <p class="text-sm font-bold text-gray-900 tracking-wide" id="loading-text">Menghubungkan ke server...</p>
-    </div>
-  </div>
-
-  <!-- SCRIPT LOGIKA UTAMA -->
   <script>
-    // =================================================================
-    // CONFIG SAKLAR UTAMA & URL WEB APP
-    // =================================================================
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyAJ0SOUQbu07dMyKesDP2I8PU8kVUfuPhE2MXusi4x1LWIb9bln7OoJceVUQMXgSkFLg/exec"; // Tempel URL Apps Script Kamu di sini
-    const TAHAP_VOTING_DIMULAI = false; // UBAH JADI true JIKA MAU MENGUNCI PENGAJUAN CALON
-    const TOTAL_TOKEN_PEMILIH = 92; // Konstanta 92 Token Pemilih Sesuai Request
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEfD-E9E7NXciTaQKGVmcAV592TWSTtri5zLa9sJoQaV_qBGlte_-a9XaXnazeVCDX6w/exec"; 
+    const TOTAL_RUMAH_WARGA = 92; 
 
-    let dataSistem = { calon: [], rekap: {} };
-    let tabAktifSaatIni = 1; // Menyimpan posisi tab agar tidak lompat sendiri saat refresh background
+    let dataSistem = {};
+    let pilihanWarga = { humas: null, wakil: null, keamanan: null, bendahara: null };
 
-    function kembaliKeMenuAwal() {
-      window.location.href = "forumlist.html";
-    }
+    const konfigurasiJabatan = [
+      { id: 'humas', label: 'Humas', propertiCalon: 'calon_humas', propertiRekap: 'rekap_humas' },
+      { id: 'wakil', label: 'Wakil Humas', propertiCalon: 'calon_wakil', propertiRekap: 'rekap_wakil' },
+      { id: 'keamanan', label: 'Koordinator Keamanan', propertiCalon: 'calon_keamanan', propertiRekap: 'rekap_keamanan' },
+      { id: 'bendahara', label: 'Bendahara', propertiCalon: 'calon_bendahara', propertiRekap: 'rekap_bendahara' }
+    ];
 
-    function cekStatusSaklarSistem() {
-      const formCalon = document.getElementById('form-pengajuan');
-      const btnSubmitCalon = document.getElementById('btn-submit-pengajuan');
-      const infoTutup = document.getElementById('notif-pengajuan-tutup');
-
-      if (TAHAP_VOTING_DIMULAI) {
-        infoTutup.classList.remove('hidden');
-        if(formCalon) Array.from(formCalon.elements).forEach(el => el.disabled = true);
-        if(btnSubmitCalon) {
-          btnSubmitCalon.className = "w-full bg-gray-400 text-white p-3.5 rounded-xl font-bold cursor-not-allowed text-sm";
-          btnSubmitCalon.innerText = "Sesi Pengajuan Selesai";
-        }
-      }
-    }
-
-    // Mengontrol tampilan halaman berdasarkan status pendaftaran hak suara warga
-    function aturTampilanBilikSuara() {
-      const sudahPernahVote = localStorage.getItem('status_voted_warga');
+    function muatDataSistem() {
+      document.getElementById('loading-overlay').classList.remove('hidden');
       
-      if (sudahPernahVote === 'true') {
-        // JIKA SUDAH VOTE: Sembunyikan semua formulir dan navigasi tab, langsung kunci ke grafik rekap
-        document.getElementById('navigasi-menu-utama').classList.add('hidden');
-        document.getElementById('tab-1').classList.add('hidden');
-        document.getElementById('tab-2').classList.add('hidden');
-        document.getElementById('area-rekap-hasil').classList.remove('hidden');
-      } else {
-        // JIKA BELUM VOTE ATAU DIAUTORESET ADMIN: Munculkan menu tab kembali secara aman
-        document.getElementById('navigasi-menu-utama').classList.remove('hidden');
-        document.getElementById('area-rekap-hasil').classList.add('hidden');
-        
-        // Tetap kunci tab yang sedang dibuka user saat ini, jangan biarkan mental ke tab 1
-        jalankanMekanismeTab(tabAktifSaatIni);
-      }
-    }
+      const scriptLama = document.getElementById('jsonp-init-script');
+      if (scriptLama) scriptLama.remove();
 
-    async function muatDataSistem() {
-      try {
-        const res = await fetch(SCRIPT_URL);
-        dataSistem = await res.json();
-
-        const totalSuaraMasuk = dataSistem.rekap ? Object.values(dataSistem.rekap).reduce((a, b) => a + b, 0) : 0;
+      window.handleInitialDataResponse = function(response) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+        dataSistem = response;
         
-        // AUTO RESET MEMORI HP: Jika rekap suara di sheet di-clear (0), hapus status ter-voted warga otomatis
-        if (totalSuaraMasuk === 0 && dataSistem.calon && dataSistem.calon.length > 0) {
+        if (dataSistem.total_voted === 0 || dataSistem.total_voted === undefined) {
           localStorage.removeItem('status_voted_warga');
         }
 
-        aturTampilanBilikSuara();
-        renderSemuaHalaman();
-      } catch (err) {
-        console.error("Gagal sinkronisasi data:", err);
-      }
-    }
-
-    function renderSemuaHalaman() {
-      // 1. Render Daftar Calon Terdaftar (Tab 1)
-      const containerPengajuan = document.getElementById('list-pengajuan');
-      if (!dataSistem.calon || dataSistem.calon.length === 0) {
-        containerPengajuan.innerHTML = `<p class="text-center text-gray-600 col-span-full font-medium bg-white/30 p-4 rounded-xl">Belum ada calon yang diajukan.</p>`;
-      } else {
-        containerPengajuan.innerHTML = dataSistem.calon.map((nama, idx) => `
-          <div class="glass-card p-5 rounded-2xl text-center shadow-md border border-white/30">
-            <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mx-auto mb-3 shadow-sm text-sm">${idx + 1}</div>
-            <h4 class="font-bold text-base text-gray-900">${nama}</h4>
-            <p class="text-[10px] text-blue-700 font-bold mt-2 bg-blue-50/60 inline-block px-2.5 py-0.5 rounded-full border border-blue-200/50">Kandidat Aktif</p>
-          </div>
-        `).join('');
-      }
-
-      // 2. Render Card Surat Suara (Tab 2)
-      const containerVoting = document.getElementById('list-voting');
-      if (!dataSistem.calon || dataSistem.calon.length === 0) {
-        containerVoting.innerHTML = `<p class="text-center text-gray-600 col-span-full font-medium bg-white/30 p-4 rounded-xl">Belum ada opsi kandidat.</p>`;
-      } else {
-        containerVoting.innerHTML = dataSistem.calon.map(nama => `
-          <div class="glass-card p-5 rounded-2xl shadow-md border border-white/30 flex flex-col justify-between hover:scale-[1.01] transition duration-200">
-            <div class="mb-4">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Calon Humas</span>
-              <h3 class="text-base font-extrabold text-gray-900 mt-0.5">${nama}</h3>
-            </div>
-            <button onclick="kirimSuaraVote('${nama}')" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold text-xs hover:bg-blue-700 shadow-md transition tracking-wide">
-              Coblos Calon Ini
-            </button>
-          </div>
-        `).join('');
-      }
-
-      // 3. Hitung & Suntik Data Rekapitulasi Berdasarkan Basis 92 Token Pemilih
-      const containerRekap = document.getElementById('list-rekap');
-      const totalSuaraMasuk = dataSistem.rekap ? Object.values(dataSistem.rekap).reduce((a, b) => a + b, 0) : 0;
+        prosesFaseTampilan(dataSistem.fase);
+        renderSemuaData();
+      };
       
-      const belumMemilih = TOTAL_TOKEN_PEMILIH - totalSuaraMasuk;
-      const pctSudah = TOTAL_TOKEN_PEMILIH > 0 ? Math.round((totalSuaraMasuk / TOTAL_TOKEN_PEMILIH) * 100) : 0;
-      const pctBelum = 100 - pctSudah;
+      const script = document.createElement('script');
+      script.id = 'jsonp-init-script';
+      script.src = `${SCRIPT_URL}?callback=handleInitialDataResponse&_=${new Date().getTime()}`;
+      document.body.appendChild(script);
+    }
 
-      // Suntik data ke card progres bagian atas
-      document.getElementById('stat-sudah-pilih').innerText = `${totalSuaraMasuk} / ${TOTAL_TOKEN_PEMILIH} Warga`;
-      document.getElementById('pct-sudah-pilih').innerText = `${pctSudah}%`;
-      document.getElementById('stat-belum-pilih').innerText = `${belumMemilih} / ${TOTAL_TOKEN_PEMILIH} Warga`;
-      document.getElementById('pct-belum-pilih').innerText = `${pctBelum}%`;
-      document.getElementById('progress-kehadiran').style.width = `${pctSudah}%`;
+    function prosesFaseTampilan(fase) {
+      const badge = document.getElementById('badge-fase');
+      const judulRekap = document.getElementById('judul-rekap');
+      
+      document.getElementById('fase-pengajuan').classList.add('hidden');
+      document.getElementById('fase-voting').classList.add('hidden');
 
-      // Render Bar Progress Setiap Kandidat Calon Humas
-      if (!dataSistem.calon || dataSistem.calon.length === 0) {
-        containerRekap.innerHTML = `<p class="text-center text-gray-600 font-medium bg-white/30 p-4 rounded-xl">Belum ada data rekapitulasi.</p>`;
+      if (fase === "voting") {
+        badge.innerText = "FASE 2: BILIK SUARA DIGITAL DIBUKA";
+        badge.className = "inline-block mt-2 px-4 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800";
+        judulRekap.innerText = "📊 Rekapitulasi Suara Sementara";
+        document.getElementById('fase-voting').classList.remove('hidden');
+        aturTampilanBilikSuara();
+      } else if (fase === "selasai" || fase === "selesai") {
+        badge.innerText = "FASE 3: PEMILIHAN SELESAI / REKAP FINAL";
+        badge.className = "inline-block mt-2 px-4 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800";
+        judulRekap.innerText = "📊 Hasil Perolehan Suara Final";
       } else {
-        containerRekap.innerHTML = dataSistem.calon.map(nama => {
-          const jumlahSuara = dataSistem.rekap[nama] || 0;
-          const persentase = totalSuaraMasuk > 0 ? Math.round((jumlahSuara / totalSuaraMasuk) * 100) : 0;
-          return `
-            <div class="bg-white/50 p-4 rounded-2xl border border-white/40 shadow-xs">
-              <div class="flex justify-between items-center mb-2">
-                <span class="font-extrabold text-gray-900 text-sm">${nama}</span>
-                <span class="text-xs font-bold text-blue-700 bg-white/80 px-2 py-0.5 rounded-md border border-blue-100">${jumlahSuara} Suara (${persentase}%)</span>
-              </div>
-              <div class="w-full bg-white/40 h-2.5 rounded-full overflow-hidden border border-white/20">
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-700" style="width: ${persentase}%"></div>
-              </div>
-            </div>
-          `;
-        }).join('');
+        badge.innerText = "FASE 1: PENGAJUAN CALON KANDIDAT";
+        badge.className = "inline-block mt-2 px-4 py-1 text-xs font-bold rounded-full bg-orange-100 text-orange-800";
+        judulRekap.innerText = "📊 Daftar Kandidat Calon Terdaftar";
+        document.getElementById('fase-pengajuan').classList.remove('hidden');
       }
     }
 
-    function bukaKertasSuara() {
-      if (localStorage.getItem('status_voted_warga') === 'true') {
-        alert("Anda terdeteksi sudah menyalurkan hak suara sebelumnya!");
-        return;
+    function renderSemuaData() {
+      const containerDaftar = document.getElementById('container-daftar-calon');
+      containerDaftar.innerHTML = '';
+      
+      // Cek apakah sistem saat ini berada di fase voting atau selesai
+      const isFaseVotingAtauSelesai = (dataSistem.fase === "voting" || dataSistem.fase === "selesai" || dataSistem.fase === "selasai");
+
+      konfigurasiJabatan.forEach(jab => {
+        let listNamaCalon = dataSistem[jab.propertiCalon] || [];
+        let petaRekap = dataSistem[jab.propertiRekap] || {};
+        let htmlJabatan = `<div class="border-b border-slate-200/60 pb-4 last:border-0 last:pb-0"><h3 class="font-bold text-slate-900 text-sm mb-2">🔹 ${jab.label}</h3><div class="space-y-2">`;
+        
+        if(listNamaCalon.length === 0) {
+          htmlJabatan += `<p class="text-xs text-slate-500 italic">Belum ada calon diajukan</p>`;
+        }
+        
+        listNamaCalon.forEach(nama => {
+          if (isFaseVotingAtauSelesai) {
+            // JIKA FASE VOTING / SELESAI: Tampilkan persentase suara dan progress bar
+            let jumlahSuara = petaRekap[nama] || 0;
+            let persen = dataSistem.total_voted > 0 ? Math.round((jumlahSuara / dataSistem.total_voted) * 100) : 0;
+            htmlJabatan += `
+              <div class="bg-white/50 p-2.5 rounded-xl border border-slate-200/40">
+                <div class="flex justify-between items-center text-xs font-semibold mb-1">
+                  <span>${nama}</span>
+                  <span class="text-blue-600">${jumlahSuara} Suara (${persen}%)</span>
+                </div>
+                <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                  <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${persen}%"></div>
+                </div>
+              </div>`;
+          } else {
+            // JIKA FASE PENGAJUAN: Tampilkan nama calon saja dengan simpel & bersih (Sesuai feedback!)
+            htmlJabatan += `
+              <div class="bg-white/60 px-4 py-2.5 rounded-xl border border-slate-200/40 flex items-center gap-2">
+                <i class="fas fa-user text-xs text-slate-400"></i>
+                <span class="text-xs font-bold text-slate-700">${nama}</span>
+              </div>`;
+          }
+        });
+        htmlJabatan += `</div></div>`;
+        containerDaftar.innerHTML += htmlJabatan;
+      });
+
+      // Render Surat Suara (Bilik)
+      const containerBilik = document.getElementById('container-pilihan-jabatan');
+      containerBilik.innerHTML = '';
+      konfigurasiJabatan.forEach(jab => {
+        let listNamaCalon = dataSistem[jab.propertiCalon] || [];
+        let htmlBilik = `<div class="bg-white/40 p-3 rounded-2xl border border-slate-200/40"><h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-2 text-center bg-blue-100 text-blue-800 py-1 rounded">Pilih ${jab.label}</h3><div class="grid grid-cols-2 gap-2">`;
+        
+        if(listNamaCalon.length === 0) {
+          htmlBilik += `<p class="col-span-2 text-center text-xs text-slate-500 italic py-2">Belum ada kandidat pilihan</p>`;
+        }
+        
+        listNamaCalon.forEach(nama => {
+          let isSelected = pilihanWarga[jab.id] === nama ? 'selected' : '';
+          htmlBilik += `<button onclick="pilihKandidat('${jab.id}', '${nama}', this)" class="card-kandidat ${isSelected} p-2.5 text-center border border-slate-300 rounded-xl bg-white text-xs font-bold text-slate-700">${nama}</button>`;
+        });
+        htmlBilik += `</div></div>`;
+        containerBilik.innerHTML += htmlBilik;
+      });
+
+      // Update diagram persentase partisipasi global
+      if (dataSistem.total_voted !== undefined) {
+        let hitungVoted = dataSistem.total_voted;
+        let persenPartisipasi = Math.round((hitungVoted / TOTAL_RUMAH_WARGA) * 100);
+        
+        document.getElementById('text-persen-partisipasi').innerText = persenPartisipasi + "%";
+        document.getElementById('text-hitung-voted').innerText = `${hitungVoted} dari ${TOTAL_RUMAH_WARGA} rumah telah memberikan suara`;
+        document.getElementById('bar-persen-partisipasi').style.width = persenPartisipasi + "%";
       }
-
-      const no_rumah = document.getElementById('vote-no-rumah').value.trim();
-      const token = document.getElementById('vote-token').value.trim();
-
-      if (!no_rumah || !token) {
-        alert("Silakan ketik nomor rumah dan token unik terlebih dahulu!");
-        return;
-      }
-
-      document.getElementById('loading-text').innerText = "Memeriksa kredensial warga...";
-      document.getElementById('loading-overlay').classList.remove('hidden');
-
-      setTimeout(() => {
-        document.getElementById('loading-overlay').classList.add('hidden');
-        document.getElementById('area-kandidat-voting').classList.remove('hidden');
-        document.getElementById('area-kandidat-voting').scrollIntoView({ behavior: 'smooth' });
-      }, 800);
     }
 
-    document.getElementById('form-pengajuan').addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (TAHAP_VOTING_DIMULAI) {
-        alert("Pengajuan ditutup! Saat ini sedang masa pemungutan suara.");
-        return;
-      }
+    function prosesAjukanCalon() {
+      const jabatan = document.getElementById('form-usul-jabatan').value;
+      const namaCalon = document.getElementById('form-usul-nama').value.trim();
+      if (!namaCalon) return alert("Isi nama calon!");
 
-      const btn = document.getElementById('btn-submit-pengajuan');
-      const no_rumah = encodeURIComponent(document.getElementById('input-blok').value);
-      const nama_calon = encodeURIComponent(document.getElementById('input-calon').value);
-
-      document.getElementById('loading-text').innerText = "Mengirim pengajuan calon...";
       document.getElementById('loading-overlay').classList.remove('hidden');
-      btn.disabled = true;
-
-      window.handlePengajuanResponse = function(response) {
+      window.handleSubmission = function(res) {
         document.getElementById('loading-overlay').classList.add('hidden');
-        alert("Data pengajuan calon berhasil direkam!");
-        document.getElementById('form-pengajuan').reset();
-        btn.disabled = false;
+        document.getElementById('jsonp-sub-script').remove();
+        alert(res.message);
+        document.getElementById('form-usul-nama').value = "";
         muatDataSistem();
-        document.getElementById('jsonp-script-1').remove();
       };
 
       const script = document.createElement('script');
-      script.id = 'jsonp-script-1';
-      script.src = `${SCRIPT_URL}?action=tambah_calon&no_rumah=${no_rumah}&nama_calon=${nama_calon}&callback=handlePengajuanResponse`;
+      script.id = 'jsonp-sub-script';
+      script.src = `${SCRIPT_URL}?action=ajukan_calon&jabatan=${jabatan}&nama_calon=${encodeURIComponent(namaCalon)}&callback=handleSubmission`;
       document.body.appendChild(script);
-    });
+    }
 
-    function kirimSuaraVote(namaPilihan) {
-      const no_rumah = encodeURIComponent(document.getElementById('vote-no-rumah').value.trim());
-      const token = encodeURIComponent(document.getElementById('vote-token').value.trim());
-      const pilihan = encodeURIComponent(namaPilihan);
+    function pilihKandidat(idJabatan, namaCalon, elementTombol) {
+      pilihanWarga[idJabatan] = namaCalon;
+      elementTombol.parentElement.querySelectorAll('.card-kandidat').forEach(btn => btn.classList.remove('selected'));
+      elementTombol.classList.add('selected');
+    }
 
-      if (confirm(`Apakah Anda yakin ingin mencoblos "${namaPilihan}"? Hak suara ini bersifat permanen.`)) {
-        document.getElementById('loading-text').innerText = "Memverifikasi token & merekam suara...";
-        document.getElementById('loading-overlay').classList.remove('hidden');
-
-        window.handleVoteResponse = function(response) {
-          document.getElementById('loading-overlay').classList.add('hidden');
-
-          if (response.status === "success") {
-            alert("Suara berhasil direkam! Terima kasih atas partisipasi Anda.");
-            localStorage.setItem('status_voted_warga', 'true');
-            muatDataSistem();
-          } else {
-            alert("Gagal memproses hak suara: " + response.message);
-          }
-          document.getElementById('jsonp-script-2').remove();
-        };
-
-        const script = document.createElement('script');
-        script.id = 'jsonp-script-2';
-        script.src = `${SCRIPT_URL}?action=vote_token&no_rumah=${no_rumah}&token=${token}&pilihan=${pilihan}&callback=handleVoteResponse`;
-        document.body.appendChild(script);
+    function aturTampilanBilikSuara() {
+      const isAlreadyVoted = localStorage.getItem('status_voted_warga');
+      if (isAlreadyVoted === "true") {
+        document.getElementById('box-kredensial').classList.add('hidden');
+        document.getElementById('box-partisipasi-voted').classList.remove('hidden'); 
+        document.getElementById('box-form-bilik').classList.add('hidden');
+        document.getElementById('box-sudah-voted').classList.remove('hidden');
+      } else {
+        document.getElementById('box-kredensial').classList.remove('hidden');
+        document.getElementById('box-partisipasi-voted').classList.add('hidden'); 
+        document.getElementById('box-form-bilik').classList.remove('hidden');
+        document.getElementById('box-sudah-voted').classList.add('hidden');
       }
     }
 
-    // Fungsi klik tab dari antarmuka warga
-    function switchTab(tabNum) {
-      tabAktifSaatIni = tabNum; // Amankan nomor tab yang sedang dikunjungi
-      jalankanMekanismeTab(tabNum);
-    }
-
-    // Eksekutor perubahan tampilan tab secara manual yang aman dari gangguan auto-sync
-    function jalankanMekanismeTab(tabNum) {
-      for(let i = 1; i <= 2; i++) {
-        document.getElementById(`tab-${i}`).className = i === tabNum ? "block space-y-8" : "hidden";
-        document.getElementById(`btn-${i}`).className = i === tabNum 
-          ? "w-1/2 px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm bg-blue-600 text-white" 
-          : "w-1/2 px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm transition shadow-sm text-gray-700 hover:bg-white/50";
-      }
+    function prosesKirimSuaraWarga() {
+      const noRumah = document.getElementById('input-no-rumah').value.trim();
+      const token = document.getElementById('input-token').value.trim();
       
-      if(tabNum === 1) {
-        document.getElementById('area-kandidat-voting').classList.add('hidden');
+      if (!noRumah || !token) return alert("Harap isi No Rumah dan Token!");
+      if (!pilihanWarga.humas || !pilihanWarga.wakil || !pilihanWarga.keamanan || !pilihanWarga.bendahara) {
+        return alert("Pilih semua dari 4 jabatan!");
       }
+
+      if (!window.confirm("Apakah Anda yakin dengan semua pilihan Anda?\n\nPilihan suara yang sudah dikirim bersifat PERMANEN dan tidak dapat diubah kembali.")) {
+        return; 
+      }
+
+      document.getElementById('loading-overlay').classList.remove('hidden');
+      window.handleVoteResponse = function(res) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+        
+        const scriptLama = document.getElementById('jsonp-vote-script');
+        if (scriptLama) scriptLama.remove();
+        
+        if (res.status === "success") {
+          alert("Suara Anda berhasil disimpan ke sistem!");
+          localStorage.setItem('status_voted_warga', 'true'); 
+          
+          document.getElementById('input-no-rumah').value = "";
+          document.getElementById('input-token').value = "";
+          pilihanWarga = { humas: null, wakil: null, keamanan: null, bendahara: null };
+          
+          muatDataSistem();
+        } else { 
+          alert(res.message); 
+        }
+      };
+
+      const params = new URLSearchParams({
+        action: 'vote_multijabatan', no_rumah: noRumah, token: token,
+        humas: pilihanWarga.humas, wakil: pilihanWarga.wakil, keamanan: pilihanWarga.keamanan, bendahara: pilihanWarga.bendahara,
+        callback: 'handleVoteResponse'
+      });
+      const script = document.createElement('script');
+      script.id = 'jsonp-vote-script';
+      script.src = `${SCRIPT_URL}?${params.toString()}`;
+      document.body.appendChild(script);
     }
 
-    // Eksekusi awal ketika sistem pertama kali berjalan
-    cekStatusSaklarSistem();
     muatDataSistem();
   </script>
 </body>
