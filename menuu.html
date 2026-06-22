@@ -21,7 +21,7 @@ h2 {
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* CAROUSEL GLASS STYLE (PURE CSS) */
+/* CAROUSEL GLASS STYLE */
 .carousel-container {
   position: relative;
   width: 100%;
@@ -32,7 +32,7 @@ h2 {
   -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* Jarak pas ke menu di bawahnya */
   box-sizing: border-box;
 }
 
@@ -43,7 +43,7 @@ h2 {
 }
 
 .slide-item {
-  min-w: 100%;
+  min-width: 100%;
   width: 100%;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -115,38 +115,6 @@ h2 {
   border-radius: 4px;
 }
 
-/* CARD NOTIFIKASI ATAS */
-.notif-card {
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 18px 16px;
-  margin-bottom: 16px;
-  width: 100%;
-  box-sizing: border-box;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  cursor: pointer;
-}
-
-.notif-header {
-  display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
-}
-
-.notif-header .bell {
-  font-size: 22px; color: #fff;
-}
-
-.notif-header .judul {
-  font-weight: 700; font-size: 14px; color: #fff;
-}
-
-.notif-isi {
-  font-size: 13px; color: #fff; line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
 /* MENU CARD UTAMA */
 .menu-card {
   border-radius: 20px;
@@ -215,27 +183,18 @@ h2 {
 </head>
 <body>
 
-  <h2>Selamat Datang di Sarana informasi Blok AC</h2>
+<h2>Selamat Datang di Sarana informasi Blok AC</h2>
 
-  <div class="carousel-container">
-    <div id="carouselSlider" class="carousel-slider">
-      <div class="slide-item">
-        <div class="slide-text-content" style="text-align: center; color: rgba(255,255,255,0.8); font-size: 14px;">
-          ⏳ Memuat informasi Blok AC...
-        </div>
+<div class="carousel-container">
+  <div id="carouselSlider" class="carousel-slider">
+    <div class="slide-item">
+      <div class="slide-text-content" style="text-align: center; color: rgba(255,255,255,0.8); font-size: 14px;">
+        ⏳ Memuat informasi Blok AC...
       </div>
     </div>
-    <div id="carouselDots" class="carousel-dots"></div>
   </div>
-
-  <!--<div class="notif-card" id="cardPengumuman" onclick="tampilDetail()">
-    <div class="notif-header">
-      <span class="bell">🔔</span>
-      <div class="judul" id="judulPengumuman">Loading...</div>
-    </div>
-    <div class="notif-isi" id="isiPengumuman">Ambil data dari Sheet...</div>-->
-  </div>
-
+  <div id="carouselDots" class="carousel-dots"></div>
+</div>
 
 <div class="grid-menu">
   <div class="menu-card" onclick="window.location.href='cashflow.html'">
@@ -270,6 +229,11 @@ h2 {
     <div class="sub"></div>
   </div>
 </div>
+<div class="menu-card" onclick="window.location.href='catatansipil.html'">
+  <div class="icon">🗂️</div>
+  <div class="title">Data Kependudukan</div>
+  <div class="sub">catatan sipil warga</div>
+</div>
 
 <div class="menu-card" onclick="window.location.href='peralatan.html'">
   <div class="icon">🛠️</div>
@@ -279,7 +243,6 @@ h2 {
 
 <script>
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxyBTKTznI1xkqqAb6MtVLp4F_mW3irH0GGiufQbdjdjwfCsbwVCBYmCzHKVFCay13E/exec";
-const PENGUMUMAN_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=866521813&single=true&output=csv";
 
 let currentSlide = 0;
 let totalSlides = 0;
@@ -313,22 +276,22 @@ async function loadCarouselFromSheet() {
               <div>
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                   <span style="font-size:20px;">📢</span>
-                  <h4 style="margin:0; font-size:13px; font-weight:bold; uppercase; tracking-wide:0.05em; opacity:0.9;">${item.judul}</h4>
+                  <h4 style="margin:0; font-size:13px; font-weight:bold; text-transform:uppercase; tracking-wide:0.05em; opacity:0.9;">${item.judul}</h4>
                 </div>
                 <p style="margin:0; font-size:14px; font-weight:500; line-height:1.5;">${item.konten}</p>
               </div>
-              <div style="display:flex; justify-content:between; align-items:center; margin-top:15px; pt-2; border-top:1px solid rgba(255,255,255,0.1); font-size:10px; color:rgba(255,255,255,0.5);">
-                <span style="flex-grow:1;">Blok AC Info</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1); font-size:10px; color:rgba(255,255,255,0.5);">
+                <span>Blok AC Info</span>
                 <span style="background:rgba(255,255,255,0.15); padding:2px 8px; border-radius:10px;">${index + 1} / ${totalSlides}</span>
               </div>
             </div>
           </div>
         `;
-      } else       if (tipe === 'gambar') {
+      } else if (tipe === 'gambar') {
         slideHTML = `
           <div class="slide-item">
             <div class="slide-img-content">
-              <img src="${item.konten}" alt="${item.judul}" loading="lazy" crossorigin="anonymous">
+              <img src="${item.konten}" alt="${item.judul}" onerror="this.src='https://placehold.co/600x400/22c55e/white?text=Gambar+Error'">
               <div class="slide-img-overlay"></div>
               <div class="slide-img-text">
                 <span style="font-size:10px; font-weight:bold; text-transform:uppercase; color:#fbbf24; background:rgba(251,191,36,0.2); padding:2px 6px; border:1px solid rgba(251,191,36,0.3); border-radius:4px; display:inline-block; margin-bottom:6px;">Kegiatan</span>
@@ -338,7 +301,6 @@ async function loadCarouselFromSheet() {
           </div>
         `;
       }
-
 
       slider.insertAdjacentHTML('beforeend', slideHTML);
 
@@ -385,24 +347,6 @@ function goToSlide(index) {
   currentSlide = index;
   updateCarousel();
 }
-
-// MEMUAT DATA NOTIFIKASI PENGUMUMAN MANUAL BAWAH
-fetch(PENGUMUMAN_URL + '&t=' + Date.now())
-.then(res => res.text())
-.then(csv => {
-  let baris = csv.trim().split('\n');
-  if(baris.length === 0) throw new Error('Sheet kosong');
-
-  let dataBaris = baris[1] || baris[0]; 
-  let isiFull = dataBaris.replace(/"/g,'').trim();
-
-  document.getElementById('judulPengumuman').innerText = 'Pengumuman';
-  document.getElementById('isiPengumuman').innerText = isiFull;
-})
-.catch(err => {
-  document.getElementById('judulPengumuman').innerText = 'Gagal Load';
-  document.getElementById('isiPengumuman').innerText = err.message;
-});
 
 window.addEventListener('DOMContentLoaded', loadCarouselFromSheet);
 </script>
