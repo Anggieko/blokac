@@ -43,142 +43,34 @@ h1{text-align:center;font-size:22px;margin-bottom:24px;text-shadow:0 2px 10px rg
   box-shadow:0 8px 32px rgba(0,0,0,0.15)
 }
 .card h2{font-size:18px;text-align:center;margin-bottom:16px;color:#ff7b25}
-.adart-note{
-  font-size:12px;
-  opacity:0.7;
-  margin-bottom:14px;
-}
-
-.adart-section{
-  font-size:15px;
-  font-weight:800;
-  margin-bottom:10px;
-  color:#FFB74D;
-}
-
-.adart-row{
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-  margin-bottom:8px;
-  opacity:0.95;
-}
-
-.transfer-title{
-  font-size:12px;
-  font-weight:700;
-  text-align:center;
-  opacity:0.8;
-  margin-bottom:8px;
-  letter-spacing:0.5px;
-}
-
-.transfer-norek{
-  font-size:28px;
-  font-weight:800;
-  text-align:center;
-  letter-spacing:3px;
-  margin-bottom:6px;
-}
-
-.transfer-bank{
-  font-size:13px;
-  text-align:center;
-  opacity:0.85;
-  margin-bottom:16px;
-}
-
-.btn-copy{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#3b82f6,#2563eb);
-  color:#fff;
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 4px 12px rgba(59,130,246,0.4);
-}
-
+.adart-note{font-size:12px;opacity:0.7;margin-bottom:14px;}
+.adart-section{font-size:15px;font-weight:800;margin-bottom:10px;color:#FFB74D;}
+.adart-row{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;opacity:0.95;}
+.transfer-title{font-size:12px;font-weight:700;text-align:center;opacity:0.8;margin-bottom:8px;letter-spacing:0.5px;}
+.transfer-norek{font-size:28px;font-weight:800;text-align:center;letter-spacing:3px;margin-bottom:6px;}
+.transfer-bank{font-size:13px;text-align:center;opacity:0.85;margin-bottom:16px;}
+.btn-copy{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(59,130,246,0.4);}
 .btn-copy:active{transform:scale(0.98)}
+.transfer-catatan{font-size:11px;text-align:center;opacity:0.7;margin-top:10px;}
 
-.transfer-catatan{
-  font-size:11px;
-  text-align:center;
-  opacity:0.7;
-  margin-top:10px;
-}
 /* TABEL */
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
-  table-layout:fixed;
-}
-
-th, td{
-  padding:10px 6px;
-  word-wrap:break-word;
-  overflow-wrap:anywhere;
-}
-
+table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;}
+th, td{padding:10px 6px;word-wrap:break-word;overflow-wrap:anywhere;}
 th:nth-child(1), td:nth-child(1){ width:35% }
 th:nth-child(2), td:nth-child(2){ width:20%; text-align:center }
 th:nth-child(3), td:nth-child(3){ width:45%; text-align:right }
+td:nth-child(3){font-weight:700;white-space:nowrap;font-size:13px;}
+.badge{padding:4px 6px;border-radius:8px;font-size:11px;font-weight:700;display:inline-block;white-space:nowrap;color:#fff;}
+.sosial{background:#10b981}.infra{background:#3b82f6}.darurat{background:#f59e0b}.cctv{background:#8b5cf6}
 
-td:nth-child(3){
-  font-weight:700;
-  white-space:nowrap;
-  font-size:13px;
-}
-
-.badge{
-  padding:4px 6px;
-  border-radius:8px;
-  font-size:11px;
-  font-weight:700;
-  display:inline-block;
-  white-space:nowrap;
-  color:#fff;
-}
 /* GRAFIK */
 .chart-box{max-width:400px;margin:0 auto}
 canvas{max-height:280px}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:16px;left:16px;right:16px;height:64px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:9999;color:#111;font-size:13px;font-weight:600}
-/* Tombol bawah */
-.btn-wrap {
-  position: fixed;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  padding: 0 16px;
-}
-.btn {
-  flex: 1;
-  max-width: 180px;
-  background: white;
-  color: #0f9b8e;
-  border: none;
-  padding: 14px 20px;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-  cursor: pointer;
-}
-.btn.rincian {
-  background: #ff7675;
-  color: white;
-}
-.btn:active {
-  transform: scale(0.96);
-}
+.btn-wrap {position: fixed;bottom: 20px;left: 0;right: 0;display: flex;gap: 10px;justify-content: center;padding: 0 16px;}
+.btn {flex: 1;max-width: 180px;background: white;color: #0f9b8e;border: none;padding: 14px 20px;border-radius: 50px;font-weight: 700;font-size: 14px;box-shadow: 0 6px 20px rgba(0,0,0,0.25);cursor: pointer;}
+.btn:active {transform: scale(0.96);}
 </style>
 </head>
 <body>
@@ -186,29 +78,14 @@ canvas{max-height:280px}
 <h1>📊 Skema Alokasi Dana</h1>
 
 <div class="container">
-
-  <!-- 3 CARD BESAR LIST -->
   <div class="income-wrap">
     <div class="card-income kas">
       <div class="label">TOTAL INCOME KAS</div>
       <div class="value" id="kas">Loading...</div>
       <div class="sumber">📝 Sumber: Iuran warga Blok AC bulanan</div>
     </div>
-<!--
-    <div class="card-income lain">
-      <div class="label">TOTAL INCOME LAINNYA</div>
-      <div class="value" id="lainnya">Loading...</div>
-      <div class="sumber">📝 Sumber: Awal Serah Terima Humas sebelumnya</div>
-    </div>
-
-    <div class="card-income total">
-      <div class="label">TOTAL INCOME</div>
-      <div class="value" id="total">Loading...</div>
-      <div class="sumber">💰 Total Gabungan Dana</div>
-    </div>-->
   </div>
 
-  <!-- TABEL ALOKASI -->
   <div class="card">
     <h2>Tabel Alokasi</h2>
     <table id="tabel">
@@ -217,44 +94,32 @@ canvas{max-height:280px}
     </table>
   </div>
 
-  <!-- GRAFIK PIE -->
   <div class="card">
     <h2>Grafik Diagram</h2>
     <div class="chart-box">
       <canvas id="pieChart"></canvas>
     </div>
   </div>
+
 <div class="card">
   <h2>ADART</h2>
   <div class="adart-note">* NOTE</div>
-
   <div class="adart-section">SOSIAL</div>
-  <div class="adart-row">
-    <span>menikah/ spesial moment</span>
-    <span>Rp. 100.000</span>
-  </div>
-  <div class="adart-row">
-    <span>berkabung</span>
-    <span>Rp100.000</span>
-  </div>
-
+  <div class="adart-row"><span>menikah/ spesial moment</span><span>Rp. 100.000</span></div>
+  <div class="adart-row"><span>berkabung</span><span>Rp100.000</span></div>
   <div class="adart-section" style="margin-top:16px">DARURAT : Rapat, iuran PHB/PHBN</div>
-  <div class="adart-row">
-    <span>range</span>
-    <span>200.000 - 250.000</span>
-  </div>
+  <div class="adart-row"><span>range</span><span>200.000 - 250.000</span></div>
 </div>
 
-<!-- CARD TRANSFER -->
 <div class="card">
   <div class="transfer-title">TRANSFER KE REKENING KHUS BLOK AC</div>
   <div class="transfer-norek">007264620425</div>
   <div class="transfer-bank">BCA Digital • a/n fikry aliyansyah Kusuma</div>
-
   <button class="btn-copy" onclick="copyRek()">📋 Salin Data Transfer</button>
   <div class="transfer-catatan">Catatan: tulis no rumah + iuran apa</div>
 </div>
 </div>
+
 <div class="btn-wrap">
   <button class="btn" onclick="window.location.href='iuran1.html?v='+Date.now()">← Kembali</button>
 </div>
@@ -267,21 +132,17 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTb
 function parseAngka(str){
   if(!str) return 0;
   str = String(str).replace(/Rp/g,'').replace(/\s/g,'').trim();
-
   if(str.includes('.') && str.includes(',')){
     str = str.replace(/,/g,'');
   }
   else if(str.includes(',') &&!str.includes('.')){
     str = str.replace(/\./g,'').replace(',', '.');
   }
-
   return parseFloat(str) || 0;
 }
+
 function formatRupiah(angka){
-  return 'Rp' + angka.toLocaleString('id-ID', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  return 'Rp' + angka.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 function ambilNilai(baris){
@@ -290,9 +151,19 @@ function ambilNilai(baris){
   return baris.substring(idx+1).replace(/"/g,'').trim();
 }
 
+// FUNGSI BARU: copot persen dari "SOSIAL 10%"
+function ambilPersen(baris){
+  if(!baris) return 0;
+  let teks = baris.split(',')[0].replace(/"/g,'').trim(); // "SOSIAL 10%"
+  let match = teks.match(/\d+%/); // nyari "10%"
+  return match? parseInt(match[0]) : 0; // jadi angka 10
+}
+
+let chart; // biar ga numpuk chart
+
 async function loadData(){
   try{
-    const res = await fetch(CSV_URL);
+    const res = await fetch(CSV_URL + '&t=' + Date.now()); // anti cache
     const text = await res.text();
     const lines = text.split('\n');
 
@@ -302,25 +173,15 @@ async function loadData(){
     const cctv = parseAngka(ambilNilai(lines[6]));
 
     const kas = parseAngka(ambilNilai(lines[9]));
-    const lainnya = parseAngka(ambilNilai(lines[10]));
-    const total = parseAngka(ambilNilai(lines[11]));
 
-    // Isi 3 card besar - PAKE IF BIAR GA ERROR KALO DIHIDE
-    if(document.getElementById('kas'))
-      document.getElementById('kas').textContent = formatRupiah(kas);
+    document.getElementById('kas').textContent = formatRupiah(kas);
 
-    if(document.getElementById('lainnya'))
-      document.getElementById('lainnya').textContent = formatRupiah(lainnya);
-
-    if(document.getElementById('total'))
-      document.getElementById('total').textContent = formatRupiah(total);
-
-    // Data alokasi
+    // PERSEN SEKARANG DINAMIS NGIKUT SHEET
     const data = [
-      {nama:'SOSIAL', persen:10, class:'sosial', nominal:sosial},
-      {nama:'INFRASTRUKTUR', persen:45, class:'infra', nominal:infra},
-      {nama:'DANA DARURAT', persen:20, class:'darurat', nominal:darurat},
-      {nama:'CCTV', persen:25, class:'cctv', nominal:cctv}
+      {nama:'SOSIAL', persen:ambilPersen(lines[3]), class:'sosial', nominal:sosial},
+      {nama:'INFRASTRUKTUR', persen:ambilPersen(lines[4]), class:'infra', nominal:infra},
+      {nama:'DANA DARURAT', persen:ambilPersen(lines[5]), class:'darurat', nominal:darurat},
+      {nama:'CCTV', persen:ambilPersen(lines[6]), class:'cctv', nominal:cctv}
     ];
 
     // Isi tabel
@@ -335,10 +196,11 @@ async function loadData(){
         </tr>
       `;
     });
-    tbody.innerHTML += `<tr><td>TOTAL ALOKASI</td><td>100%</td><td>${formatRupiah(total)}</td></tr>`;
+    tbody.innerHTML += `<tr><td>TOTAL ALOKASI</td><td>100%</td><td>${formatRupiah(kas)}</td></tr>`;
 
-    // Grafik Pie
-    new Chart(document.getElementById('pieChart'), {
+    // Grafik Pie - destroy dulu biar ga dobel
+    if(chart) chart.destroy();
+    chart = new Chart(document.getElementById('pieChart'), {
       type: 'pie',
       data: {
         labels: data.map(d=>d.nama),
@@ -352,17 +214,8 @@ async function loadData(){
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {color: '#fff', font: {size: 13}}
-          },
-          tooltip: {
-            callbacks: {
-              label: function(ctx){
-                return ctx.label + ': ' + formatRupiah(ctx.parsed);
-              }
-            }
-          }
+          legend: {position: 'bottom', labels: {color: '#fff', font: {size: 13}}},
+          tooltip: {callbacks: {label: function(ctx){return ctx.label + ': ' + formatRupiah(ctx.parsed);}}}
         }
       }
     });
@@ -374,6 +227,7 @@ async function loadData(){
 }
 
 loadData();
+
 function copyRek(){
   const teks = `Transfer ke: 007264620425\nBCA Digital a/n fikry aliyansyah Kusuma\nCatatan: tulis no rumah + iuran apa`;
   navigator.clipboard.writeText(teks);
