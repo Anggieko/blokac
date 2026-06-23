@@ -328,13 +328,20 @@
       }
     }
 
-    function prosesKirimSuaraWarga() {
+       function prosesKirimSuaraWarga() {
       const noRumah = document.getElementById('input-no-rumah').value.trim();
       const token = document.getElementById('input-token').value.trim();
       
       if (!noRumah || !token) return alert("Harap isi No Rumah dan Token!");
-      if (!pilihanWarga.humas || !pilihanWarga.wakil || !pilihanWarga.keamanan || !pilihanWarga.bendahara) {
-        return alert("Pilih semua dari 4 jabatan!");
+      
+      // --- LOGIKA BARU AGAR LOLOS: HANYA WAJIBKAN JABATAN YANG AKTIF & ADA KANDIDATNYA ---
+      for (let jab of konfigurasiJabatan) {
+        let listNamaCalon = dataSistem[jab.propertiCalon] || [];
+        
+        // Jika jabatan di-set aktif DAN di Sheets memang ada nama calonnya, baru wajib dipilih
+        if (jab.aktif && listNamaCalon.length > 0 && !pilihanWarga[jab.id]) {
+          return alert(`Anda belum memilih kandidat untuk posisi ${jab.label}!`);
+        }
       }
 
       if (!window.confirm("Apakah Anda yakin dengan semua pilihan Anda?\n\nPilihan suara yang sudah dikirim bersifat PERMANEN dan tidak dapat diubah kembali.")) {
@@ -364,7 +371,10 @@
 
       const params = new URLSearchParams({
         action: 'vote_multijabatan', no_rumah: noRumah, token: token,
-        humas: pilihanWarga.humas, wakil: pilihanWarga.wakil, keamanan: pilihanWarga.keamanan, bendahara: pilihanWarga.bendahara,
+        humas: pilihanWarga.humas || "", 
+        wakil: pilihanWarga.wakil || "", 
+        keamanan: pilihanWarga.keamanan || "", 
+        bendahara: pilihanWarga.bendahara || "",
         callback: 'handleVoteResponse'
       });
       const script = document.createElement('script');
@@ -372,6 +382,7 @@
       script.src = `${SCRIPT_URL}?${params.toString()}`;
       document.body.appendChild(script);
     }
+
 
     muatDataSistem();
   </script>
