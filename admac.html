@@ -93,7 +93,7 @@ tbody tr:nth-child(4n+4) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script>
     const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSysX9KjjRf4zJcntZvkaSJcqFxJxTCQkCtaM6kmCmss-7Emx-UqR8F7Cy6dLiPy15gaZRIOf4WAtyi/pub?gid=2105431829&single=true&output=csv";
-    const PIN_BENAR = "0000";
+    const PIN_BENAR = "3333";
     let rawData = [];
     let unlocked = false;
 
@@ -144,9 +144,13 @@ return namaClean.includes(searchClean) || noRumahClean.includes(searchClean);
             headers.forEach(h => {
                 let val = row[h] || '-';
                 // Sembunyikan jika NO KK atau NIK
-                if (!unlocked && (h.toUpperCase().includes('NO KK') || h.toUpperCase().includes('NIK'))) {
-                    val = '••••••••';
-                }
+                if (!unlocked && 
+    (h.toUpperCase().includes('NO KK') || 
+     h.toUpperCase().includes('NIK') ||
+     h.toUpperCase().includes('TGL LAHIR') ||
+     h.toUpperCase().includes('USIA'))) {
+    val = '.........';
+}
                 html += `<td>${val}</td>`;
             });
             html += '</tr>';
