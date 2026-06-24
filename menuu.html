@@ -213,7 +213,7 @@ h2 {
   from { opacity: 0; transform: translateX(-60px); }
   to { opacity: 1; transform: translateX(0); }
 }
-  /* Styling untuk ikon loading */
+/* Styling untuk ikon loading */
 .loader {
   border: 4px solid #f3f3f3; /* Warna abu-abu muda */
   border-top: 4px solid #3498db; /* Warna biru untuk efek putar */
@@ -294,11 +294,30 @@ h2 {
   <div class="sub">catatan sipil warga</div>
 </div>
 
-<div class="menu-card" onclick="window.location.href='peralatan.html'">
-  <div class="icon">🛠️</div>
-  <div class="title">Peralatan</div>
-  <div class="sub">Daftar Peralatan</div>
 </div>
+
+<div class="flex-2kolom">
+ <div class="menu-card"
+style="flex:1"
+onclick="bukaPengurus(event)">
+    <div class="icon">🗣️</div>
+    <div class="title">Pengurus</div>
+    <div class="sub"></div>
+  </div>
+  
+  <div class="menu-card" style="flex:1" onclick="window.location.href='peralatan.html'">
+    <div class="icon">🛠️</div>
+    <div class="title">Perlengkapan</div>
+    <div class="sub"></div>
+  </div>
+</div>
+ <div class="menu-card" style="flex:1" onclick="window.location.href='penyimpanan.html'">
+    <div class="icon">🎞️</div>
+    <div class="title">Media Penyimpanan</div>
+    <div class="sub"></div>
+  </div>
+
+
 
 <script>
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxyBTKTznI1xkqqAb6MtVLp4F_mW3irH0GGiufQbdjdjwfCsbwVCBYmCzHKVFCay13E/exec";
@@ -431,7 +450,67 @@ document.querySelector(".close").onclick = function() {
   modal.style.display = "none";
 };
 
+</script>
+<!-- Modal PIN Pengurus -->
+<div id="pinModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center">
+  <div style="background:white; border-radius:20px; padding:24px; width:85%; max-width:320px; text-align:center">
+    <div style="font-size:18px; font-weight:700; margin-bottom:12px">🔒 PIN Pengurus</div>
+    <div style="font-size:13px; color:#666; margin-bottom:16px">Masukkan PIN untuk akses data pengurus</div>
+    <input type="password" id="pinInput" inputmode="numeric" maxlength="10" placeholder="******" 
+      style="width:100%; padding:12px; border:2px solid #0f9b8e; border-radius:12px; font-size:18px; text-align:center; letter-spacing:8px; margin-bottom:16px">
+    <div style="display:flex; gap:10px">
+      <button onclick="tutupPin()" style="flex:1; padding:12px; border:none; background:#ccc; border-radius:12px; font-weight:700">Batal</button>
+      <button onclick="cekPin()" style="flex:1; padding:12px; border:none; background:#0f9b8e; color:white; border-radius:12px; font-weight:700">Buka</button>
+    </div>
+    <div id="pinError" style="color:red; font-size:12px; margin-top:10px; display:none">PIN salah bang!</div>
+  </div>
+</div>
 
+<script>
+// GANTI PIN LU DISINI
+const PIN_PENGURUS = "20242026"; 
+
+// Link asli menu Pengurus lu apa? Ganti di bawah ini
+const LINK_PENGURUS = "pengurus.html"; 
+
+function bukaPengurus(e) {
+  e.preventDefault();
+  document.getElementById('pinModal').style.display = 'flex';
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinError').style.display = 'none';
+  setTimeout(() => document.getElementById('pinInput').focus(), 100);
+}
+
+function tutupPin() {
+  document.getElementById('pinModal').style.display = 'none';
+}
+
+function cekPin() {
+  const pin = document.getElementById('pinInput').value;
+  if(pin === PIN_PENGURUS) {
+    window.location.href = LINK_PENGURUS + '?v=' + Date.now();
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+  }
+}
+
+// Enter buat submit PIN
+document.getElementById('pinInput')?.addEventListener('keypress', function(e){
+  if(e.key === 'Enter') cekPin();
+});
+
+// PASANG EVENT KE TOMBOL PENGURUS
+document.addEventListener('DOMContentLoaded', function() {
+  // Cari tombol "Pengurus" berdasarkan teksnya
+  const semuaCard = document.querySelectorAll('.card, a, div');
+  semuaCard.forEach(el => {
+    if(el.innerText?.trim() === 'Pengurus') {
+      el.onclick = bukaPengurus;
+      el.style.cursor = 'pointer';
+    }
+  });
+});
 </script>
 
 </body>

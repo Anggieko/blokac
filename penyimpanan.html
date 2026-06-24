@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"> <!-- INI PENTING BIAR EMOJI GA RUSAK -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catatan Sipil Warga Blok AC</title>
+  <title>Peralatan Blok AC</title>
   <style>
     * {
       margin: 0;
@@ -116,24 +116,23 @@
 </head>
 <body>
   <div class="container">
-    <h1>Catatan Sipil Warga Blok AC</h1>
+    <h1>Peralatan Blok AC</h1>
     
     <div class="menu-grid">
-      <!-- Card Mesin Rumput --> 
-
-
-      <a href="admac.html" class="menu-card">
+      <!-- Card Mesin Rumput -->
+      <a href="galeri.html" class="menu-card">
         <div class="icon">🗂️</div>
-        <div class="judul">Data Kependudukan</div>
-        <div class="subjudul">Data Pribadi</div>
+        <div class="judul">Galeri Blok AC</div>
+        <div class="subjudul">Kumpulan Foto event</div>
+      </a>
+      <a href="arsip.html" class="menu-card">
+        <div class="icon">🗂️</div>
+        <div class="judul">Arsip Notulensi</div>
+        <div class="subjudul">Catatan Rapat dan TTD warga Blok AC</div>
       </a>
 
       <!-- Card Peralatan Lain -->
-     <a href="datalain.html" class="menu-card">
-        <div class="icon">🗂️</div>
-        <div class="judul">Data Keseluruhan</div>
-        <div class="subjudul"></div>
-      </a>
+
     </div>
   </div>
 
@@ -141,45 +140,6 @@
 <button class="back-btn" onclick="window.location.href='menuu.html'">
   ← Kembali
 </button>
-<!-- Modal PIN -->
-<div id="modalPIN" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);z-index:999;align-items:center;justify-content:center">
-  <div style="background:rgba(255,255,255,0.95);padding:30px;border-radius:20px;width:85%;max-width:320px;text-align:center">
-    <h3 style="margin-bottom:15px;color:#2e7d32">Masukkan PIN</h3>
-    <input type="password" id="pinInput" maxlength="6" placeholder="****" 
-      style="width:100%;padding:12px;font-size:18px;text-align:center;letter-spacing:8px;border:2px solid #ddd;border-radius:10px">
-    <p id="pinError" style="color:red;font-size:13px;margin-top:8px;height:18px"></p>
-    <button onclick="validasiPIN()" style="width:100%;padding:12px;background:#2e7d32;color:#fff;border:none;border-radius:10px;font-weight:700;margin-top:10px">Buka</button>
-    <button onclick="tutupPIN()" style="width:100%;padding:10px;background:#aaa;color:#fff;border:none;border-radius:10px;margin-top:8px">Batal</button>
-  </div>
-</div>
 
-<script>
-const PIN_BENAR = "000000"; // GANTI PIN LU
-
-function cekPIN(){
-  document.getElementById('modalPIN').style.display='flex';
-  document.getElementById('pinInput').value='';
-  document.getElementById('pinError').innerText='';
-}
-
-function tutupPIN(){
-  document.getElementById('modalPIN').style.display='none';
-}
-
-function validasiPIN(){
-  const pin = document.getElementById('pinInput').value;
-  if(pin === PIN_BENAR){
-    localStorage.setItem('pinOK', Date.now());
-    window.location.href = 'inputiuran.html';
-  } else {
-    document.getElementById('pinError').innerText = 'PIN salah!';
-    document.getElementById('pinInput').value='';
-  }
-}
-
-document.getElementById('pinInput').addEventListener('keyup', function(e){
-  if(e.key === 'Enter') validasiPIN();
-});
-</script>
 </body>
 </html>
