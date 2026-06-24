@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Kas</title>
+    <style>
+        body { 
+            margin: 0; padding: 20px; 
+            background: url('bg.png') no-repeat center center fixed; 
+            background-size: cover; font-family: 'Segoe UI', sans-serif;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+        }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3); padding: 30px; 
+            border-radius: 25px; width: 320px; color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        input, select, button { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            border-radius: 12px; border: none; box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.85);
+        }
+        button { background: #27ae60; color: white; font-weight: bold; cursor: pointer; }
+/* Styling tombol saat loading */
+.loading-spinner {
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top: 3px solid #fff;
+    width: 15px; height: 15px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+/* Tombol back tengah bawah */
+.back-btn{
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.3);
+  color:#fff;
+  padding:12px 28px;
+  border-radius:50px;
+  font-weight:600;
+  font-size:15px;
+  text-decoration:none;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  transition:0.2s;
+}
+
+.back-btn:active{
+  transform:translateX(-50%) scale(0.95);
+  background:rgba(255,255,255,0.3);
+}
+h1{
+  text-align:center;
+  color:#fff;
+  margin-bottom:25px;
+  font-size:22px;
+  text-shadow:0 2px 8px rgba(0,0,0,0.3);
+
+    </style>
+</head>
+<body>
+<h1>INPUT DATA KEUANGAN</h1>
+
+<div id="pin-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; display:flex; align-items:center; justify-content:center;">
+    <div class="glass-card">
+        <h3 style="text-align:center;">Masukkan PIN</h3>
+        <input type="password" id="pin-input" maxlength="4" placeholder="4 Digit PIN" style="text-align:center; font-size:20px;">
+        <button onclick="cekPin()">Masuk</button>
+    </div>
+</div>
+
+    <div class="glass-card">
+        <h3>Pemasukan</h3>
+        <select id="bulanM"></select>
+        <input type="number" id="nomM" placeholder="Nominal (Rp)">
+        <button onclick="proses('Masuk')">Simpan Pemasukan</button>
+    </div>
+
+    <div class="glass-card">
+        <h3>Pengeluaran</h3>
+        <select id="bulanK"></select>
+        <select id="katK">
+            <option value="Sosial">Sosial</option>
+            <option value="Fasilitas">Fasilitas</option>
+            <option value="Dana Darurat">Dana Darurat</option>
+        </select>
+        <input type="text" id="ketK" placeholder="Keterangan">
+        <input type="number" id="nomK" placeholder="Nominal (Rp)">
+        <button onclick="proses('Keluar')">Simpan Pengeluaran</button>
+    </div>
+<a href="catatansipil.html" class="back-btn">← Kembali</a>
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwBRwwYpPtIn_D71d9ER9o3u-nH9m9a-Ni3gxtKKCb_i0iPUYoGixBxhEWB9XF0NKc0Vw/exec";
+        const bulanList = ["June 2026", "July 2026","August 2026","September 2026","October 2026","November 2026","December 2026"];
+
+        window.onload = () => {
+            ['bulanM', 'bulanK'].forEach(id => {
+                let el = document.getElementById(id);
+                bulanList.forEach(b => {
+                    let opt = document.createElement('option'); opt.value = b; opt.innerHTML = b;
+                    el.appendChild(opt);
+                });
+            });
+        };
+
+async function proses(jenis) {
+    // Ambil elemen tombol
+    const btn = event.target;
+    const originalText = btn.innerText;
+    
+    // Tampilkan indikator loading
+    btn.innerHTML = '<span class="loading-spinner"></span> Mengirim...';
+    btn.disabled = true; // Nonaktifkan tombol agar tidak bisa diklik berulang
+    btn.style.opacity = "0.7";
+
+    const data = {
+        jenis: jenis,
+        bulan: document.getElementById(jenis === 'Masuk' ? 'bulanM' : 'bulanK').value,
+        nominal: document.getElementById(jenis === 'Masuk' ? 'nomM' : 'nomK').value,
+        keterangan: jenis === 'Keluar' ? document.getElementById('ketK').value : '',
+        kategori: jenis === 'Keluar' ? document.getElementById('katK').value : ''
+    };
+
+    try {
+        await fetch(GAS_URL, {
+            method: "POST", 
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        alert("Data berhasil disimpan!");
+        location.reload();
+    } catch (error) {
+        alert("Gagal mengirim data. Coba lagi.");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.style.opacity = "1";
+    }
+}
+const PIN_RAHASIA = "0000"; // Ganti PIN Anda di sini
+
+function cekPin() {
+    const input = document.getElementById('pin-input').value;
+    if (input === PIN_RAHASIA) {
+        document.getElementById('pin-overlay').style.display = 'none';
+    } else {
+        alert("PIN Salah!");
+        document.getElementById('pin-input').value = "";
+    }
+}
+
+    </script>
+</body>
+</html>
