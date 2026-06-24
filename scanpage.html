@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QR Hadir</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: url('bg.png'); /* Pastikan file bg.png ada */
+            background-size: cover;
+            background-position: center;
+            font-family: sans-serif;
+            color: white;
+        }
+
+        /* Container untuk judul */
+        .header-text {
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Container kamera */
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+.text{
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+
+        /* Mengatur style tombol dari library agar sesuai tema */
+        #reader button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+/* Card untuk instruksi teks */
+.instruction-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    /* Tambahkan ini untuk margin di dalam card */
+    padding: 20px; 
+    box-sizing: border-box; /* Agar padding tidak menambah lebar card */
+    
+    margin-bottom: 20px;
+    text-align: center;
+    color: white;
+}
+ /* Style untuk tombol kembali yang selaras dengan card */
+    .back-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 30px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .back-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    </style>
+</head>
+<body>
+
+    <div class="header-text">
+        <h1>Daftar Hadir Rapat</h1>
+<div class="instruction-card">
+    <p>Scan untuk mengisi tandatangan yang nantinya tercantum di Notulensi Rapat secara otomatis di akhir Rapat</p>
+    <p><b>Arahkan kamera ke QR Code untuk akses formulir</b></p>
+</div>
+
+<div id="reader"></div>
+
+
+        
+    </div>
+
+    <div id="reader"></div>
+<a href="forumlist.html" class="back-button">Kembali</a>
+
+
+
+   
+
+
+
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            // Arahkan ke URL formulir daftar hadirmu
+            window.location.href = "https://infoblokac.vercel.app/daftarhadir.html"; 
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { 
+                fps: 10, 
+                qrbox: 250, 
+                facingMode: "environment" // Paksa kamera belakang
+            }
+        );
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+</body>
+</html>
