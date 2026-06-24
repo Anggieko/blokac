@@ -22,6 +22,8 @@ h2 {
 }
 
 /* CAROUSEL GLASS STYLE */
+
+
 .carousel-container {
   position: relative;
   width: 100%;
@@ -32,7 +34,7 @@ h2 {
   -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  margin-bottom: 12px; /* Jarak pas ke menu di bawahnya */
+  margin-bottom: 12px;
   box-sizing: border-box;
 }
 
@@ -48,44 +50,43 @@ h2 {
   flex-shrink: 0;
   box-sizing: border-box;
 }
-
-.slide-text-content {
-  padding: 24px;
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.slide-img-content img {
+  cursor: pointer; /* Memberi indikasi bahwa gambar bisa diklik */
+  pointer-events: auto;
 }
 
+/* Bagian Gambar yang dioptimasi */
 .slide-img-content {
   position: relative;
-  min-height: 240px;
-  display: flex;
-  align-items: flex-end;
+  width: 100%;
+  /* Gunakan aspect-ratio agar tinggi otomatis mengikuti lebar (sangat rapi di mobile) */
+  aspect-ratio: 16 / 9; 
   overflow: hidden;
   border-radius: 20px;
 }
 
 .slide-img-content img {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
+  /* Cover memastikan gambar mengisi seluruh kotak tanpa distorsi */
   object-fit: cover;
-  filter: brightness(0.75);
+  /* Memastikan fokus gambar tetap di tengah */
+  object-position: center;
+  display: block;
+  /* Hapus filter agar gambar tampil jernih seperti aslinya */
+  filter: none;
 }
 
-.slide-img-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
-}
-
+/* Jika Anda ingin teks di bawah gambar, biarkan ini */
 .slide-img-text {
-  position: relative;
-  z-index: 10;
-  padding: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  color: white;
+  z-index: 10;
 }
 
 .carousel-dots {
@@ -102,7 +103,7 @@ h2 {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.6);
   border: none;
   padding: 0;
   cursor: pointer;
@@ -114,6 +115,39 @@ h2 {
   width: 16px;
   border-radius: 4px;
 }
+/* Styling Modal */
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9); /* Latar gelap */
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 90%;
+  max-width: 700px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+}
+
 
 /* MENU CARD UTAMA */
 .menu-card {
@@ -195,6 +229,11 @@ h2 {
   </div>
   <div id="carouselDots" class="carousel-dots"></div>
 </div>
+<div id="imageModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="fullImage">
+</div>
+
 
 <div class="grid-menu">
   <div class="menu-card" onclick="window.location.href='cashflow.html'">
@@ -349,6 +388,30 @@ function goToSlide(index) {
 }
 
 window.addEventListener('DOMContentLoaded', loadCarouselFromSheet);
+// Ambil elemen modal
+const modal = document.getElementById("imageModal");
+const modalImg = document.getElementById("fullImage");
+const slides = document.querySelectorAll(".slide-img-content img");
+
+// Fungsi untuk membuka modal saat gambar diklik
+slides.forEach(img => {
+  img.onclick = function() {
+    modal.style.display = "block";
+    modalImg.src = this.src;
+  }
+});
+
+// Fungsi untuk menutup modal saat diklik di luar gambar
+modal.onclick = function() {
+  modal.style.display = "none";
+};
+
+// Tutup dengan tombol silang
+document.querySelector(".close").onclick = function() {
+  modal.style.display = "none";
+};
+
+
 </script>
 
 </body>
