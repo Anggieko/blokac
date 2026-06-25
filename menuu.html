@@ -265,6 +265,19 @@ h2 {
  0% { transform: rotate(0deg); }
  100% { transform: rotate(360deg); }
 }
+@keyframes float {
+ 0%, 100% { transform: translateY(0px); }
+ 50% { transform: translateY(-15px); }
+}
+
+.loading-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+  animation: float 2s ease-in-out infinite;
+}
 </style>
 </head>
 <body>
@@ -272,8 +285,7 @@ h2 {
 <!-- LOADING OVERLAY -->
 <div id="loadingOverlay">
   <div class="loading-box">
-    <!-- LOGO DI SINI -->
-    <img src="logoAC.png" alt="Logo RT" style="width:80px; height:80px; object-fit:contain; margin-bottom:16px; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5))">
+    <img src="logoAC.png" alt="Logo RT" class="loading-logo">
     
     <div class="loading-spinner"></div>
     <div class="loading-text">Tunggu Sebentar...</div>
