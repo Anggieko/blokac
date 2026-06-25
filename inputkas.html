@@ -84,14 +84,32 @@
         const bulanList = ["July 2026", "August 2026", "September 2026", "October 2026", "November 2026", "December 2026"];
 
         window.onload = () => {
-            ['bulanM', 'bulanK'].forEach(id => {
-                let el = document.getElementById(id);
-                bulanList.forEach(b => {
-                    let opt = document.createElement('option'); opt.value = b; opt.innerHTML = b;
-                    el.appendChild(opt);
-                });
-            });
-        };
+    const bulanList = ["June 2026", "July 2026", "August 2026", "September 2026", "October 2026", "November 2026", "December 2026"];
+    
+    // Mendapatkan tanggal saat ini
+    const sekarang = new Date();
+    const bulanSekarangIndex = sekarang.getMonth(); // 0 = Jan, 5 = Juni, dst
+    const tahunSekarang = sekarang.getFullYear();
+    const namaBulanSekarang = sekarang.toLocaleString('default', { month: 'long' });
+    const stringBulanSekarang = `${namaBulanSekarang} ${tahunSekarang}`;
+
+    ['bulanM', 'bulanK'].forEach(id => {
+        let el = document.getElementById(id);
+        
+        // Filter: Hanya tampilkan bulan yang >= bulan sekarang
+        bulanList.forEach(b => {
+            // Logika sederhana: jika Anda ingin hanya bulan ini, 
+            // cukup bandingkan dengan stringBulanSekarang
+            if (b === stringBulanSekarang) { 
+                let opt = document.createElement('option'); 
+                opt.value = b; 
+                opt.innerHTML = b;
+                el.appendChild(opt);
+            }
+        });
+    });
+};
+
 
         async function proses(jenis) {
             const btn = document.getElementById(jenis === 'Masuk' ? 'btnM' : 'btnK');
