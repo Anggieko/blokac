@@ -106,54 +106,21 @@ h1{
             });
         };
 
-async function proses(jenis) {
-    // Ambil elemen tombol
-    const btn = event.target;
-    const originalText = btn.innerText;
-    
-    // Tampilkan indikator loading
-    btn.innerHTML = '<span class="loading-spinner"></span> Mengirim...';
-    btn.disabled = true; // Nonaktifkan tombol agar tidak bisa diklik berulang
-    btn.style.opacity = "0.7";
+        async function proses(jenis) {
+            const data = {
+                jenis: jenis,
+                bulan: document.getElementById(jenis === 'Masuk' ? 'bulanM' : 'bulanK').value,
+                nominal: document.getElementById(jenis === 'Masuk' ? 'nomM' : 'nomK').value,
+                keterangan: jenis === 'Keluar' ? document.getElementById('ketK').value : '',
+                kategori: jenis === 'Keluar' ? document.getElementById('katK').value : ''
+            };
 
-    const data = {
-        jenis: jenis,
-        bulan: document.getElementById(jenis === 'Masuk' ? 'bulanM' : 'bulanK').value,
-        nominal: document.getElementById(jenis === 'Masuk' ? 'nomM' : 'nomK').value,
-        keterangan: jenis === 'Keluar' ? document.getElementById('ketK').value : '',
-        kategori: jenis === 'Keluar' ? document.getElementById('katK').value : ''
-    };
-
-    try {
-        await fetch(GAS_URL, {
-            method: "POST", 
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-        alert("Data berhasil disimpan!");
-        location.reload();
-    } catch (error) {
-        alert("Gagal mengirim data. Coba lagi.");
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        btn.style.opacity = "1";
-    }
-}
-<!-- 
-
-const PIN_RAHASIA = "0000"; // Ganti PIN Anda di sini
-
-function cekPin() {
-    const input = document.getElementById('pin-input').value;
-    if (input === PIN_RAHASIA) {
-        document.getElementById('pin-overlay').style.display = 'none';
-    } else {
-        alert("PIN Salah!");
-        document.getElementById('pin-input').value = "";
-    }
--->
-
+            fetch(GAS_URL, {
+                method: "POST", mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).then(() => { alert("Data berhasil disimpan!"); location.reload(); });
+        }
     </script>
 </body>
 </html>
