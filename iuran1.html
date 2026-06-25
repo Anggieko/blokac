@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iuran Blok AC 2026</title>
+
+<!-- ===== PWA META TAGS ===== -->
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Info Blok AC">
+<meta name="theme-color" content="#0f9b8e">
+
 <style>
 :root{ --hijau:#0f9b8e; --bg:#e6f7f5; }
 
@@ -143,7 +151,8 @@ h1{
 
 
 <script>
-const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=44172498&single=true&output=csv';
+// ===== FORCE NO-CACHE =====
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=44172498&single=true&output=csv&t=' + Date.now();
 
 function parseCSV(line){
   const res=[];let cur='';let q=false;
@@ -156,7 +165,7 @@ function parseCSV(line){
   return res;
 }
 
-fetch(sheetURL)
+fetch(sheetURL, { cache: 'no-cache' })
 .then(r=>r.text())
 .then(csv=>{
   const rows=csv.split('\n').map(l=>l.trim()).filter(l=>l);
@@ -252,6 +261,13 @@ Catatan: [isi no rumah] + [iuran apa]`;
   }).catch(() => {
     alert('Gagal copy. Salin manual ya');
   });
+}
+
+// ===== REGISTER SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('✅ Service Worker registered!'))
+    .catch(err => console.log('❌ Service Worker failed:', err));
 }
 </script>
 

@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daftar Hadir Rapat</title>
+
+<!-- ===== PWA META TAGS ===== -->
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Info Blok AC">
+<meta name="theme-color" content="#0f9b8e">
+
 <style>
 *{
   box-sizing:border-box;
@@ -175,6 +183,7 @@ button:active{
   <div id="status"></div>
 </div>
 <a class="back-btn" href="forumlist.html">kembali</a>
+
 <script>
 const LINK_EXEC = 'https://script.google.com/macros/s/AKfycbyJ0DaLrDq-bC4d83e12CfjVNGU_FyBwx9m4mqHBPfjsHHtcyqjS6ETWq1bF0A5aKv2/exec'; // sama kayak rapat.html
 
@@ -236,6 +245,13 @@ document.getElementById('formHadir').addEventListener('submit', async function(e
   document.getElementById('nama').value = '';
 }, 1000);
 });
+
+// ===== REGISTER SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('✅ Service Worker registered!'))
+    .catch(err => console.log('❌ Service Worker failed:', err));
+}
 </script>
 
 </body>

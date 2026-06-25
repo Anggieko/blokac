@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Input Kas</title>
+    
+    <!-- ===== PWA META TAGS ===== -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Info Blok AC">
+    <meta name="theme-color" content="#0f9b8e">
+    
     <style>
         body { 
     margin: 0; 
@@ -84,32 +92,14 @@
         const bulanList = ["July 2026", "August 2026", "September 2026", "October 2026", "November 2026", "December 2026"];
 
         window.onload = () => {
-    const bulanList = ["June 2026", "July 2026", "August 2026", "September 2026", "October 2026", "November 2026", "December 2026"];
-    
-    // Mendapatkan tanggal saat ini
-    const sekarang = new Date();
-    const bulanSekarangIndex = sekarang.getMonth(); // 0 = Jan, 5 = Juni, dst
-    const tahunSekarang = sekarang.getFullYear();
-    const namaBulanSekarang = sekarang.toLocaleString('default', { month: 'long' });
-    const stringBulanSekarang = `${namaBulanSekarang} ${tahunSekarang}`;
-
-    ['bulanM', 'bulanK'].forEach(id => {
-        let el = document.getElementById(id);
-        
-        // Filter: Hanya tampilkan bulan yang >= bulan sekarang
-        bulanList.forEach(b => {
-            // Logika sederhana: jika Anda ingin hanya bulan ini, 
-            // cukup bandingkan dengan stringBulanSekarang
-            if (b === stringBulanSekarang) { 
-                let opt = document.createElement('option'); 
-                opt.value = b; 
-                opt.innerHTML = b;
-                el.appendChild(opt);
-            }
-        });
-    });
-};
-
+            ['bulanM', 'bulanK'].forEach(id => {
+                let el = document.getElementById(id);
+                bulanList.forEach(b => {
+                    let opt = document.createElement('option'); opt.value = b; opt.innerHTML = b;
+                    el.appendChild(opt);
+                });
+            });
+        };
 
         async function proses(jenis) {
             const btn = document.getElementById(jenis === 'Masuk' ? 'btnM' : 'btnK');
@@ -142,6 +132,13 @@
                 btn.disabled = false;
                 btn.innerHTML = 'Simpan ' + jenis;
             }
+        }
+
+        // ===== REGISTER SERVICE WORKER =====
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('✅ Service Worker registered!'))
+            .catch(err => console.log('❌ Service Worker failed:', err));
         }
     </script>
 </body>

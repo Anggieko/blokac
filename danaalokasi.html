@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Skema Alokasi Dana Kas</title>
+
+<!-- ===== PWA META TAGS ===== -->
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Info Blok AC">
+<meta name="theme-color" content="#0f9b8e">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -127,7 +135,8 @@ canvas{max-height:280px}
 </div>
 
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=1308896656&single=true&output=csv';
+// ===== FORCE NO-CACHE =====
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRPZgiz_LwWsUTbv5MiI6W5qPSlugTAs1hb8HfhHMSaz4QS4iM4hHjxkWguohzLEB3zTNWyfFooUEIU/pub?gid=1308896656&single=true&output=csv&t=' + Date.now();
 
 function parseAngka(str){
   if(!str) return 0;
@@ -163,7 +172,7 @@ let chart; // biar ga numpuk chart
 
 async function loadData(){
   try{
-    const res = await fetch(CSV_URL + '&t=' + Date.now()); // anti cache
+    const res = await fetch(CSV_URL, { cache: 'no-cache' });
     const text = await res.text();
     const lines = text.split('\n');
 
@@ -232,6 +241,13 @@ function copyRek(){
   const teks = `Transfer ke: 007264620425\nBCA Digital a/n fikry aliyansyah Kusuma\nCatatan: tulis no rumah + iuran apa`;
   navigator.clipboard.writeText(teks);
   alert('Data transfer disalin! 📋');
+}
+
+// ===== REGISTER SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('✅ Service Worker registered!'))
+    .catch(err => console.log('❌ Service Worker failed:', err));
 }
 </script>
 
