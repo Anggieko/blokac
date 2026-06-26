@@ -1,7 +1,17 @@
+<!DOCTYPE html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scan Peralatan Blok AC</title>
+
+<!-- ===== PWA META TAGS ===== -->
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Info Blok AC">
+<meta name="theme-color" content="#0f9b8e">
+
 <style>
 * {box-sizing:border-box;margin:0;padding:0}
 body{
@@ -66,10 +76,11 @@ button{
 @keyframes scaleIn{from{transform:scale(0.8)}to{transform:scale(1)}}
 .popup-box h3{font-size:22px;margin-bottom:10px}
 .popup-box p{opacity:0.9;margin-bottom:20px}
+
 /* CARD TABEL LOG */
 .card-log{
   max-width:900px;
-  overflow-x:auto; /* biar bisa geser ke samping kalo kolom banyak */
+  overflow-x:auto;
 }
 .card-log h3{text-align:center;margin-bottom:15px}
 
@@ -82,19 +93,15 @@ table{
 th,td{
   padding:10px 8px;
   text-align:left;
-  vertical-align:top; /* rata atas biar rapi */
+  vertical-align:top;
   border-bottom:1px solid rgba(255,255,255,0.12);
-  word-wrap:break-word; /* pecah kata kalo kepanjangan */
-  white-space:normal; /* wrap otomatis */
+  word-wrap:break-word;
+  white-space:normal;
 }
-
-/* KOLOM TANGGAL BIAR GA LEBAR BANGET */
 td:nth-child(1), th:nth-child(1){
-  white-space:nowrap; /* tanggal jangan di wrap */
+  white-space:nowrap;
   width:110px;
 }
-
-/* HEADER NEMPEL PAS SCROLL */
 th{
   background:rgba(0,0,0,0.3);
   backdrop-filter:blur(10px);
@@ -103,8 +110,6 @@ th{
   top:0;
   z-index:2;
 }
-
-/* ZEBRA STRIP Biar gampang bedain baris */
 tr:nth-child(even) td{
   background:rgba(255,255,255,0.05);
 }
@@ -129,8 +134,6 @@ tr:hover td{
     
     <button type="submit" class="btn-save">Simpan Log</button>
   </form>
-  
-
 </div>
 
 <!-- POPUP SUKSES -->
@@ -141,22 +144,29 @@ tr:hover td{
     <button class="btn-save" onclick="tutupPopup()">OK</button>
   </div>
 </div>
+
 <br>
 <div class="card card-log">
-<h3>📋 Log Terbaru</h3>
-<div id="tabelLog">Loading data...</div>
+  <h3>📋 Log Terbaru</h3>
+  <div id="tabelLog">Loading data...</div>
 </div>
 
-  <div style="text-align:center">
-<button class="btn-back" onclick="window.location.href='peralatan.html'">⬅️ Kembali</button>
-  </div>
-
+<div style="text-align:center">
+  <button class="btn-back" onclick="window.location.href='peralatan.html'">⬅️ Kembali</button>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
 <script>
-const URL = 'https://script.google.com/macros/s/AKfycbyUh9dPq5vpUiHHeqrtZsxZwfg6p-XUIZByNRUtRqbXc5beFJzNaUsm0HirQudVB8Ml/exec'; // GANTI INI
+// ===== URL APPS SCRIPT (TANPA PARAMETER) =====
+const URL = 'https://script.google.com/macros/s/AKfycbyUh9dPq5vpUiHHeqrtZsxZwfg6p-XUIZByNRUtRqbXc5beFJzNaUsm0HirQudVB8Ml/exec';
+
+// ===== URL CSV LOG (DENGAN timestamp AGAR FRESH) =====
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1jQ3GzwVjjc1um7jMxfOAMh8g3ohPWHJ3mzr1lDpAQgLN27cnJPdhHYJFgulbcx2ZVPlPQHuYx1fE/pub?gid=0&single=true&output=csv&t=' + Date.now();
+
 let html5QrCode;
 
+// ===== SCAN BARCODE =====
 function mulaiScan(){
   document.getElementById('reader').style.display='block';
   html5QrCode = new Html5Qrcode("reader");
@@ -172,38 +182,44 @@ function mulaiScan(){
   ).catch(err=>alert('Gagal buka kamera: '+err));
 }
 
-document.getElementById('f').onsubmit = async e=>{
+// ===== SUBMIT FORM (UPLOAD) =====
+document.getElementById('f').onsubmit = async e => {
   e.preventDefault();
-  let res = await fetch(URL, {method:'POST', body:new FormData(e.target)});
-  let txt = await res.text();
-  if(txt=='OK'){
-    document.getElementById('popup').classList.add('show');
-    e.target.reset();
-  } else {
-    alert('Error: ' + txt);
+  
+  try {
+    let res = await fetch(URL, {
+      method: 'POST',
+      body: new FormData(e.target),
+      cache: 'no-cache'
+    });
+    
+    let txt = await res.text();
+    if (txt == 'OK') {
+      document.getElementById('popup').classList.add('show');
+      e.target.reset();
+    } else {
+      alert('Error: ' + txt);
+    }
+  } catch(err) {
+    alert('Gagal menyimpan: ' + err.message);
   }
 }
 
 function tutupPopup(){
   document.getElementById('popup').classList.remove('show');
 }
-</script>
-<script>
-// LINK CSV DARI GOOGLE SHEET LU - PUBLISH DULU
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR1jQ3GzwVjjc1um7jMxfOAMh8g3ohPWHJ3mzr1lDpAQgLN27cnJPdhHYJFgulbcx2ZVPlPQHuYx1fE/pub?gid=0&single=true&output=csv';
 
-// LOAD TABEL OTOMATIS PAS BUKA HALAMAN
-fetch(CSV_URL)
+// ===== LOAD TABEL LOG =====
+fetch(CSV_URL, { cache: 'no-cache' })
 .then(res => res.text())
 .then(csv => {
-  const rows = csv.split('\n').filter(r => r.trim() != ''); // buang baris kosong
+  const rows = csv.split('\n').filter(r => r.trim() != '');
   let html = '<table>';
   rows.forEach((row, i) => {
-    // split CSV yg bener, handle koma di dalam kutip
     const cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || row.split(',');
     html += '<tr>';
     cols.forEach((cell, idx) => {
-      cell = cell.replace(/"/g, '').trim(); // buang kutip + spasi
+      cell = cell.replace(/"/g, '').trim();
       html += i == 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`;
     });
     html += '</tr>';
@@ -212,12 +228,16 @@ fetch(CSV_URL)
   document.getElementById('tabelLog').innerHTML = html;
 })
 .catch(err => {
-  document.getElementById('tabelLog').innerHTML = 'Gagal load data';
+  document.getElementById('tabelLog').innerHTML = '❌ Gagal load data';
+  console.error(err);
 });
 
-// FUNCTION LU YG LAMA TETEP DISINI
-function scanBarcode(){ alert('Panggil scanner lu disini') }
-function simpanLog(){ alert('Simpan ke sheet lu disini') }
+// ===== REGISTER SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('✅ Service Worker registered!'))
+    .catch(err => console.log('❌ Service Worker failed:', err));
+}
 </script>
 
 </body>
