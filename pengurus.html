@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Peralatan Blok AC</title>
+  <title>Fitur Pengurus Blok AC</title>
   
   <!-- ===== PWA META TAGS ===== -->
   <link rel="manifest" href="/manifest.json">
@@ -125,7 +125,7 @@
 <body>
 
   <div class="container">
-    <h1>Peralatan Blok AC</h1>
+    <h1>Fitur Pengurus Blok AC</h1>
     
     <div class="menu-grid">
       <!-- Card Mesin Rumput -->
@@ -171,7 +171,7 @@ function validasiPin() {
     if (input === PIN_PENGURUS) {
         alert("Akses Diterima");
         // Arahkan ke halaman/menu pengurus Anda
-        window.location.href = "halaman_pengurus.html"; 
+        window.location.href = "pengurus.html"; 
     } else {
         alert("PIN Salah!");
         document.getElementById('pin-input').value = "";
@@ -196,4 +196,4 @@ if ('serviceWorker' in navigator) {
 </div>
 
 </body>
-</html>p
+</html>

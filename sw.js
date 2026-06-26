@@ -23,7 +23,11 @@ const ASSETS = [
   '/admac.html',
   '/datalain.html',
   '/rincian1.html',
-  '/danaalokasi.html'
+  '/danaalokasi.html',
+'/bg.png',
+'/logoAC.png',
+'/sawah8.png',
+'/logo-AC.png'
 ];
 
 self.addEventListener('install', event => {
