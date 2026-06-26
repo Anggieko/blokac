@@ -2,11 +2,11 @@
   "name": "Info Blok AC",
   "short_name": "Info Blok AC",
   "description": "Sarana informasi warga Blok AC",
-  "start_url": "/?pwa=1",
+  "start_url": "/?pwa=7",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0f9b8e",
+  "theme_color": "#ffffff",
   "orientation": "portrait",
   "icons": [
     {
