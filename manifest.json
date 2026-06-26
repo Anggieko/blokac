@@ -1,20 +1,25 @@
 {
   "name": "Info Blok AC",
   "short_name": "Info Blok AC",
-  "start_url": "index.html",
+  "description": "Sarana informasi warga Blok AC",
+  "start_url": "./?pwa=1",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#009688",
+  "theme_color": "#0f9b8e",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "logo-AC.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "logo-AC.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
