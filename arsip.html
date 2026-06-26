@@ -4,126 +4,146 @@
   <title>Arsip Notulensi</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- ===== PWA META TAGS ===== -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Info Blok AC">
+  <meta name="theme-color" content="#0f9b8e">
+  
+  <!-- ===== META NO-CACHE ===== -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <style>
     body{
-  margin:0;
-  padding:20px 20px 100px 20px;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  min-height:100vh;
-  background:url('bg.png') no-repeat center fixed;
-  background-size:cover;
-}
+      margin:0;
+      padding:20px 20px 100px 20px;
+      font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+      min-height:100vh;
+      background:url('bg.png') no-repeat center fixed;
+      background-size:cover;
+    }
 
-h3{
-  color:white;
-  text-align:center;
-  margin-bottom:25px;
-  font-size:22px;
-  text-shadow:0 2px 8px rgba(0,0,0,0.4);
-}
+    h3{
+      color:white;
+      text-align:center;
+      margin-bottom:25px;
+      font-size:22px;
+      text-shadow:0 2px 8px rgba(0,0,0,0.4);
+    }
 
-.item{
-  background:rgba(255,255,255,0.15);
-  backdrop-filter:blur(15px);
-  -webkit-backdrop-filter:blur(15px);
-  border:1px solid rgba(255,255,255,0.3);
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:15px;
-  box-shadow:0 8px 32px 0 rgba(31,38,135,0.2);
-}
+    .item{
+      background:rgba(255,255,255,0.15);
+      backdrop-filter:blur(15px);
+      -webkit-backdrop-filter:blur(15px);
+      border:1px solid rgba(255,255,255,0.3);
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:15px;
+      box-shadow:0 8px 32px 0 rgba(31,38,135,0.2);
+    }
 
-.tgl{
-  font-weight:600;
-  font-size:16px;
-  color:white;
-  margin-bottom:12px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
+    .tgl{
+      font-weight:600;
+      font-size:16px;
+      color:white;
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
 
-.btn{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:10px 18px;
-  background:rgba(26,115,232,0.9);
-  backdrop-filter:blur(5px);
-  color:white;
-  text-decoration:none;
-  border-radius:12px;
-  font-weight:600;
-  font-size:14px;
-  border:1px solid rgba(255,255,255,0.2);
-  transition:transform 0.2s;
-}
-.btn:active{transform:scale(0.95)}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:10px 18px;
+      background:rgba(26,115,232,0.9);
+      backdrop-filter:blur(5px);
+      color:white;
+      text-decoration:none;
+      border-radius:12px;
+      font-weight:600;
+      font-size:14px;
+      border:1px solid rgba(255,255,255,0.2);
+      transition:transform 0.2s;
+    }
+    .btn:active{transform:scale(0.95)}
 
-.back-btn{
-  position:fixed;
-  bottom:25px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,0.4);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.3);
-  color:white;
-  padding:12px 28px;
-  border-radius:50px;
-  text-decoration:none;
-  font-weight:bold;
-  font-size:15px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.3);
-  transition:transform 0.2s;
-}
-.back-btn:active{transform:translateX(-50%) scale(0.95)}
+    .back-btn{
+      position:fixed;
+      bottom:25px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,0.4);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.3);
+      color:white;
+      padding:12px 28px;
+      border-radius:50px;
+      text-decoration:none;
+      font-weight:bold;
+      font-size:15px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      transition:transform 0.2s;
+    }
+    .back-btn:active{transform:translateX(-50%) scale(0.95)}
   </style>
 </head>
 <body>
   <h3>📁 Arsip Notulensi</h3>
   <div id="list">Loading...</div>
-<a class="back-btn" href="penyimpanan.html">kembali</a>
+  <a class="back-btn" href="penyimpanan.html">kembali</a>
+  
   <script>
-    // PAKE LINK PUBLISH TO WEB LU
+    // ===== LINK CSV (TANPA PARAMETER, PAKAI META NO-CACHE) =====
     const LINK_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTF01EFJ7cJQlSXl5avLF5XaRLn4WL4WrmpW7FYOziXIBRiDtk137sR893c7GDedBC0h-GFZx8yjMMW/pub?gid=527019078&single=true&output=csv';
 
-    fetch(LINK_CSV)
- .then(res => res.text())
- .then(csv => {
-      const div = document.getElementById('list');
-      let rows = csv.split('\n').filter(r => r.trim()!= '');
-      rows.shift(); // buang header "tanggal,judul,link download pdf"
+    // ===== LOAD DATA DENGAN FETCH + NO-CACHE =====
+    fetch(LINK_CSV, { cache: 'no-cache' })
+      .then(res => res.text())
+      .then(csv => {
+        const div = document.getElementById('list');
+        let rows = csv.split('\n').filter(r => r.trim() != '');
+        rows.shift(); // buang header
 
-      if(rows.length == 0){
-        div.innerHTML = 'Belum ada notulensi';
-        return;
-      }
+        if(rows.length == 0){
+          div.innerHTML = 'Belum ada notulensi';
+          return;
+        }
 
-      let html = '';
-      rows.reverse().forEach(row => {
-  let col = row.split(',');
-  let tanggal = col[0]; // kolom 1 = Tanggal
-  let judul = col[1]; // kolom 2 = Judul Rapat
-  let linkPdf = col[2]; // kolom 3 = Link PDF
+        let html = '';
+        rows.reverse().forEach(row => {
+          let col = row.split(',');
+          let tanggal = col[0];
+          let judul = col[1];
+          let linkPdf = col[2];
 
-  if(tanggal && linkPdf){
-    // Kalau judul kosong, fallback ke "Rapat [tanggal]"
-    let namaFile = judul? judul : `Rapat ${tanggal}`;
+          if(tanggal && linkPdf){
+            let namaFile = judul ? judul : `Rapat ${tanggal}`;
+            html += `<div class="item">
+              <div class="tgl">📅 ${namaFile}</div>
+              <a class="btn" href="${linkPdf}" target="_blank">⬇️ Download PDF</a>
+            </div>`;
+          }
+        });
+        div.innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById('list').innerHTML = '❌ Gagal load data: ' + err.message;
+        console.error(err);
+      });
 
-    html += `<div class="item">
-      <div class="tgl">📅 ${namaFile}</div>
-      <a class="btn" href="${linkPdf}" target="_blank">⬇️ Download PDF</a>
-    </div>`;
-  }
-});
-      div.innerHTML = html;
-    })
- .catch(err => {
-      document.getElementById('list').innerHTML = 'Error: ' + err;
-    });
+    // ===== REGISTER SERVICE WORKER =====
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('✅ Service Worker registered!'))
+        .catch(err => console.log('❌ Service Worker failed:', err));
+    }
   </script>
-
 </body>
 </html>
