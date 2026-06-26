@@ -1,4 +1,4 @@
-const CACHE_NAME = 'info-blok-ac-v10';
+const CACHE_NAME = 'info-blok-ac-v9';
 const ASSETS = [
   '/',
   '/index.html',
@@ -25,9 +25,9 @@ const ASSETS = [
   '/rincian1.html',
   '/danaalokasi.html',
   '/bg.png',
-  '/logoAC.png',
+  '/logoAC192.png',
   '/sawah8.png',
-  '/logo-AC.png'
+  '/logoAC512.png'
 ];
 
 self.addEventListener('install', event => {
