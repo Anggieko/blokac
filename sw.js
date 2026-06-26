@@ -27,7 +27,8 @@ const ASSETS = [
   '/bg.png',
   '/logoAC192.png',
   '/sawah8.png',
-  '/logoAC512.png'
+  '/logoAC512.png',
+  '/logo-AC.png
 ];
 
 self.addEventListener('install', event => {
