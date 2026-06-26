@@ -4,8 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>E-Voting Multi-Jabatan Warga</title>
+  
+  <!-- ===== PWA META TAGS ===== -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Info Blok AC">
+  <meta name="theme-color" content="#0f9b8e">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- ===== META NO-CACHE ===== -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <style>
     body {
       background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('bg.png') no-repeat center center fixed;
@@ -25,7 +39,7 @@
       transform: scale(1.02);
       box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
     }
- .back-btn{
+    .back-btn{
       position:fixed;
       bottom:25px;
       left:50%;
@@ -44,8 +58,6 @@
       transition:transform 0.2s;
     }
     .back-btn:active{transform:translateX(-50%) scale(0.95)}
-
-
   </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col items-center p-4">
@@ -91,18 +103,17 @@
           <button onclick="prosesAjukanCalon()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow transition">
             Kirim Pengajuan Calon
           </button>
-
         </div>
       </div>
     </div>
 
-   <!-- TOMBOL BACK DI BAWAH TENGAH (FIXED & MEMILIKI LAYER TERTINGGI) -->
-  <div class="fixed bottom-8 left-0 right-0 flex justify-center z-50 px-4">
-    <a href="forumlist.html" class="blur-card rounded-full py-2.5 px-5 flex items-center gap-2 shadow-2xl border border-white/60 text-slate-800 hover:text-blue-600 transition group max-w-xs">
-      <i class="fas fa-arrow-left text-xs text-slate-600 group-hover:text-blue-600 transition"></i>
-      <span class="text-xs font-bold tracking-wide">Kembali</span>
-    </a>
-  </div>
+    <!-- TOMBOL BACK DI BAWAH TENGAH -->
+    <div class="fixed bottom-8 left-0 right-0 flex justify-center z-50 px-4">
+      <a href="forumlist.html" class="blur-card rounded-full py-2.5 px-5 flex items-center gap-2 shadow-2xl border border-white/60 text-slate-800 hover:text-blue-600 transition group max-w-xs">
+        <i class="fas fa-arrow-left text-xs text-slate-600 group-hover:text-blue-600 transition"></i>
+        <span class="text-xs font-bold tracking-wide">Kembali</span>
+      </a>
+    </div>
 
     <!-- TAMPILAN FASE 2: BILIK VOTING -->
     <div id="fase-voting" class="hidden space-y-4">
@@ -151,6 +162,7 @@
   </div>
 
   <script>
+    // ===== SCRIPT_URL TANPA PARAMETER =====
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEfD-E9E7NXciTaQKGVmcAV592TWSTtri5zLa9sJoQaV_qBGlte_-a9XaXnazeVCDX6w/exec"; 
     const TOTAL_RUMAH_WARGA = 92; 
 
@@ -164,6 +176,7 @@
       { id: 'bendahara', label: 'Bendahara', propertiCalon: 'calon_bendahara', propertiRekap: 'rekap_bendahara' }
     ];
 
+    // ===== MUAT DATA DENGAN JSONP (TANPA TIMESTAMP) =====
     function muatDataSistem() {
       document.getElementById('loading-overlay').classList.remove('hidden');
       
@@ -217,7 +230,6 @@
       const containerDaftar = document.getElementById('container-daftar-calon');
       containerDaftar.innerHTML = '';
       
-      // Cek apakah sistem saat ini berada di fase voting atau selesai
       const isFaseVotingAtauSelesai = (dataSistem.fase === "voting" || dataSistem.fase === "selesai" || dataSistem.fase === "selasai");
 
       konfigurasiJabatan.forEach(jab => {
@@ -231,7 +243,6 @@
         
         listNamaCalon.forEach(nama => {
           if (isFaseVotingAtauSelesai) {
-            // JIKA FASE VOTING / SELESAI: Tampilkan persentase suara dan progress bar
             let jumlahSuara = petaRekap[nama] || 0;
             let persen = dataSistem.total_voted > 0 ? Math.round((jumlahSuara / dataSistem.total_voted) * 100) : 0;
             htmlJabatan += `
@@ -245,7 +256,6 @@
                 </div>
               </div>`;
           } else {
-            // JIKA FASE PENGAJUAN: Tampilkan nama calon saja dengan simpel & bersih (Sesuai feedback!)
             htmlJabatan += `
               <div class="bg-white/60 px-4 py-2.5 rounded-xl border border-slate-200/40 flex items-center gap-2">
                 <i class="fas fa-user text-xs text-slate-400"></i>
@@ -328,17 +338,14 @@
       }
     }
 
-       function prosesKirimSuaraWarga() {
+    function prosesKirimSuaraWarga() {
       const noRumah = document.getElementById('input-no-rumah').value.trim();
       const token = document.getElementById('input-token').value.trim();
       
       if (!noRumah || !token) return alert("Harap isi No Rumah dan Token!");
       
-      // --- LOGIKA BARU AGAR LOLOS: HANYA WAJIBKAN JABATAN YANG AKTIF & ADA KANDIDATNYA ---
       for (let jab of konfigurasiJabatan) {
         let listNamaCalon = dataSistem[jab.propertiCalon] || [];
-        
-        // Jika jabatan di-set aktif DAN di Sheets memang ada nama calonnya, baru wajib dipilih
         if (jab.aktif && listNamaCalon.length > 0 && !pilihanWarga[jab.id]) {
           return alert(`Anda belum memilih kandidat untuk posisi ${jab.label}!`);
         }
@@ -383,8 +390,15 @@
       document.body.appendChild(script);
     }
 
-
+    // ===== LOAD DATA =====
     muatDataSistem();
+
+    // ===== REGISTER SERVICE WORKER =====
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('✅ Service Worker registered!'))
+        .catch(err => console.log('❌ Service Worker failed:', err));
+    }
   </script>
 </body>
 </html>
