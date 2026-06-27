@@ -4,12 +4,9 @@
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
-  window.OneSignalDeferred.push(async function(OneSignal) {
+  OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
-      appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332", // App ID Anda dari image_4.png
-      notifyButton: {
-        enable: true, // Memunculkan tombol lonceng otomatis di pojok kanan bawah web
-      },
+      appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332",
     });
   });
 </script>
