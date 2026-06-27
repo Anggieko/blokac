@@ -271,6 +271,10 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.log('❌ Service Worker failed:', err));
 }
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/@vercel/analytics/dist/index.min.js"></script>
+<script>
+  window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };
+  va('send', 'pageview');
+</script>
 </body>
 </html>
