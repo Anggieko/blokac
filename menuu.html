@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- ===== ONESIGNAL SDK CONFIGURATION ===== -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332",
+      allowLocalhostAsSecureOrigin: true,
     });
   });
 </script>
@@ -304,7 +306,6 @@ h2 {
 <div id="loadingOverlay">
   <div class="loading-box">
     <img src="logoAC.png" alt="Logo RT" class="loading-logo">
-    
     <div class="loading-spinner"></div>
     <div class="loading-text">Tunggu Sebentar...</div>
   </div>
@@ -495,7 +496,6 @@ async function loadCarouselFromSheet() {
       });
     }, 500);
 
-    // ILANGIN OVERLAY PAS DATA UDAH MUNCUL
     hideLoading();
 
   } catch (error) {
@@ -530,7 +530,6 @@ function goToSlide(index) {
   updateCarousel();
 }
 
-// Modal gambar
 const modal = document.getElementById("imageModal");
 const modalImg = document.getElementById("fullImage");
 modal.onclick = function() {
@@ -540,7 +539,6 @@ document.querySelector(".close").onclick = function() {
   modal.style.display = "none";
 };
 
-// Fungsi PIN
 function bukaPengurus(e) {
   e.preventDefault();
   document.getElementById('pinModal').style.display = 'flex';
@@ -569,11 +567,11 @@ document.getElementById('pinInput')?.addEventListener('keypress', function(e){
 
 window.addEventListener('DOMContentLoaded', loadCarouselFromSheet);
 
-// ===== REGISTER SERVICE WORKER =====
+// ===== UNIFORM REGISTER ONESIGNAL SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log('✅ Service Worker registered!'))
-    .catch(err => console.log('❌ Service Worker failed:', err));
+  navigator.serviceWorker.register('/OneSignalSDKWorker.js')
+    .then(() => console.log('✅ OneSignal Service Worker terdaftar dari halaman menu!'))
+    .catch(err => console.log('❌ Service Worker gagal:', err));
 }
 </script>
 
