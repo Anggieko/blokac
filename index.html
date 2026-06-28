@@ -5,12 +5,17 @@
 <script>
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   window.OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332",
-      allowLocalhostAsSecureOrigin: true, // Membantu agar izin notifikasi bisa muncul di localhost
-    });
+      // 1. Jalankan inisialisasi sampai selesai
+      await OneSignal.init({
+          appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332",
+          allowLocalhostAsSecureOrigin: true
+      });
+
+      // 2. Minta izin notifikasi ke warga setelah init selesai
+      OneSignal.Notifications.requestPermission();
   });
 </script>
+
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
