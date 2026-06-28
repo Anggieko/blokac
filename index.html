@@ -2,20 +2,20 @@
 <html lang="id">
 <head>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332",
-      });
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  window.OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "d85bd0c7-fcfb-45d8-b8e0-3967b4011332",
+      allowLocalhostAsSecureOrigin: true, // Membantu agar izin notifikasi bisa muncul di localhost
     });
-  </script>
+  });
+</script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Info Warga Blok AC</title>
 
-<!-- ===== PWA META TAGS ===== -->
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,14 +30,8 @@ body{
   animation:slideInRight 0.5s ease-out;
 }
 @keyframes slideInRight{
-  from{
-    opacity:0;
-    transform:translateX(100vw); /* mulai dari luar layar kanan */
-  }
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
+  from{opacity:0;transform:translateX(100vw);}
+  to{opacity:1;transform:translateX(0);}
 }
 
 /* ========== WELCOME PAGE ========== */
@@ -77,133 +71,49 @@ p.desc{font-size:15px;line-height:1.7;max-width:300px;margin:0 0 40px 0;position
 @keyframes melayang{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
 @keyframes naikTurun{0%,100%{transform:translateY(0px)}50%{transform:translateY(-5px)}}
 
-/* ========== KONTEN UTAMA ========== */
-#mainContent{display:none} /* disembunyiin dulu */
-#mainContent{
-  min-height:100vh;
-  background:linear-gradient(180deg,#e0e7ff 0%,#f8fafc 100%);
-  padding:20px 15px 80px 15px;
-  font-family:'Segoe UI',sans-serif;
-  display:block;
-}
-
-   /* CARD NOTIFIKASI ATAS */
- .notif-card{
-    background:#fff;
-    border-radius:24px;
-    padding:18px 16px;
-    margin-bottom:30px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.3);
-    cursor:pointer;
-  }
- .notif-header{
-    display:flex;gap:10px;align-items:center;margin-bottom:10px;
-  }
- .notif-header.bell{
-    font-size:22px;color:#ef4444;
-  }
- .notif-header.judul{
-    font-weight:700;font-size:14px;color:#111;
-  }
- .notif-isi{
-  font-size:13px;color:#555;line-height:1.5;
-  white-space:pre-wrap; /* biar enter di Sheet kebaca */
-  word-wrap:break-word;
-}
-  /* 2. GRID MENU 2x2 */
-  .grid-menu{
-    display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:30px;
-  }
-  .menu-card{
-    border-radius:24px;
-    padding:25px 15px;
-    text-align:center;
-    color:#fff;
-    box-shadow:0 8px 30px rgba(0,0,0,0.25);
-    cursor:pointer;
-    transition:0.2s;
-  }
-  .menu-card:active{transform:scale(0.95)}
-  .menu-card .icon{
-    font-size:38px;margin-bottom:10px;display:block;
-  }
-  .menu-card .title{
-    font-size:18px;font-weight:700;margin-bottom:4px;
-  }
-  .menu-card .sub{
-    font-size:11px;opacity:0.85;
-  }
-  .blue{background:linear-gradient(135deg,#3b82f6 0%,#2563eb 100%)}
-  .green{background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%)}
-  .orange{background:linear-gradient(135deg,#f97316 0%,#ea580c 100%)}
-
-/* BOTTOM NAV - PAKSA KENA PAKE !IMPORTANT */
-div[style*="position:fixed"][style*="bottom:0"]{
-  background:white !important; /* paksa solid */
-  backdrop-filter:none !important; /* matiin blur */
-  -webkit-backdrop-filter:none !important;
-  padding:12px 16px !important; /* kiri kanan 16px biar sejajar */
-  border-top:1px solid #e5e7eb !important;
-  box-shadow:0 -4px 15px rgba(0,0,0,0.08) !important;
-  z-index:9999 !important;
-}
-
-/* ICON + TEXT BAWAH */
-div[style*="position:fixed"][style*="bottom:0"] > div{
-  color:#6b7280 !important;
-  font-weight:600 !important;
-}
-div[style*="position:fixed"][style*="bottom:0"] > div.active{
-  color:#0f9b8e !important;
-}
-</style>
-</head>
-<body>
-
-<!-- 1. WELCOME PAGE DEPAN -->
-<div id="welcomePage">
-  <img src="logo-AC.png" class="logo" alt="Logo Blok AC">
-  <h1>INFO WARGA BLOK AC</h1>
-  <p class="desc">
-    92 unit - Saling Jaga, Saling Bantu<br>Tamu wajib Lapor 1x24 jam
-     </p>
-
-<button class="btn-masuk" onclick="masukWeb()">Masuk</button>
-
-</div>
-
-<script>
-function bukaMenu(){
-  // kasih efek fade out dulu di halaman ini
-  document.body.style.animation = 'slideOutLeft 0.3s ease-in forwards';
-  
-  // setelah 0.3 detik baru pindah ke menu.html
-  setTimeout(function(){
-    window.location.href = 'menu.html';
-  }, 300);
-}
-
-/* Animasi keluar ke kiri */
-document.head.insertAdjacentHTML('beforeend', `
-<style>
 @keyframes slideOutLeft{
   from{opacity:1; transform:translateX(0)}
   to{opacity:0; transform:translateX(-100vw)}
 }
 </style>
-`);
-</script>
-<script>
+</head>
+<body>
 
-function masukWeb(){
-  window.location.href = 'menuu.html?v=' + Date.now();
+<div id="welcomePage">
+  <img src="logo-AC.png" class="logo" alt="Logo Blok AC">
+  <h1>INFO WARGA BLOK AC</h1>
+  <p class="desc">
+    92 unit - Saling Jaga, Saling Bantu<br>Tamu wajib Lapor 1x24 jam
+  </p>
+  <button class="btn-masuk" onclick="masukWeb()">Masuk</button>
+</div>
+
+<script>
+async function masukWeb() {
+  // Panggil request permission OneSignal secara eksplisit saat klik tombol
+  if (window.OneSignalDeferred) {
+    window.OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        console.log("Meminta izin notifikasi...");
+        await OneSignal.Notifications.requestPermission();
+      } catch (err) {
+        console.error("Gagal/Dilewati meminta izin:", err);
+      }
+    });
+  }
+
+  // Efek animasi transisi slideOut halaman lama sebelum pindah
+  document.body.style.animation = 'slideOutLeft 0.3s ease-in forwards';
+  setTimeout(function(){
+    window.location.href = 'menuu.html?v=' + Date.now();
+  }, 300);
 }
 
-// ===== REGISTER SERVICE WORKER =====
+// ===== REGISTER ONE SIGNAL SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log('✅ Service Worker registered!'))
-    .catch(err => console.log('❌ Service Worker failed:', err));
+  navigator.serviceWorker.register('/OneSignalSDKWorker.js')
+    .then(() => console.log('✅ OneSignal Service Worker terdaftar!'))
+    .catch(err => console.log('❌ Service Worker gagal mendaftar:', err));
 }
 </script>
 
