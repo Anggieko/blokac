@@ -1,4 +1,4 @@
-const CACHE_NAME = 'info-blok-ac-v11';
+const CACHE_NAME = 'info-blok-ac-v12';
 const ASSETS = [
   '/',
   '/index.html',

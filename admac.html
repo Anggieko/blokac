@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Data Kependudukan Glass</title>
     
-    <!-- ===== PWA META TAGS ===== -->
     <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Info Blok AC">
     <meta name="theme-color" content="#0f9b8e">
-<link rel="apple-touch-icon" href="logo-AC.png">
-
+    <link rel="apple-touch-icon" href="logo-AC.png">
     
     <style>
         body { 
@@ -40,46 +38,17 @@
         th { text-align: left; padding: 12px; border-bottom: 2px solid rgba(255,255,255,0.3); white-space: nowrap; }
         td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
         tr:hover { background: rgba(255,255,255,0.1); }
-/* Menargetkan dua baris pertama (1 dan 2) sebagai baris dengan warna latar */
-tbody tr:nth-child(4n+1), 
-tbody tr:nth-child(4n+2) {
-    background-color: rgba(255, 255, 255, 0.40);
-}
 
-/* Dua baris berikutnya (3 dan 4) tetap transparan atau warna dasar */
-tbody tr:nth-child(4n+3), 
-tbody tr:nth-child(4n+4) {
-    background-color: transparent;
-}
-    /* Tombol Kembali bawah tengah - floating */
-    .back-btn {
-      position: fixed;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 14px 35px;
-      border-radius: 50px;
-      background: rgba(255,255,255,0.18);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid rgba(255,255,255,0.35);
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 999;
-    }
+        tbody tr:nth-child(4n+1), tbody tr:nth-child(4n+2) { background-color: rgba(255, 255, 255, 0.40); }
+        tbody tr:nth-child(4n+3), tbody tr:nth-child(4n+4) { background-color: transparent; }
 
-    .back-btn:active {
-      transform: translateX(-50%) scale(0.94);
-      background: rgba(255,255,255,0.3);
-    }
-
+        .back-btn {
+          position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+          padding: 14px 35px; border-radius: 50px; background: rgba(255,255,255,0.18);
+          backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.35);
+          color: white; font-weight: 600; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+          z-index: 999; display: flex; gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -96,9 +65,8 @@ tbody tr:nth-child(4n+4) {
     <div class="glass-box">
         <div class="table-wrapper" id="tabel-container">Memuat data...</div>
     </div>
-<button class="back-btn" onclick="window.location.href='catatansipil.html'">
-  ← Kembali
-</button>
+    
+    <button class="back-btn" onclick="window.location.href='catatansipil.html'">← Kembali</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -112,10 +80,7 @@ tbody tr:nth-child(4n+4) {
         download: true, 
         header: true, 
         skipEmptyLines: true,
-        complete: (res) => { 
-            rawData = res.data; 
-            renderTable(); 
-        } 
+        complete: (res) => { rawData = res.data; renderTable(); } 
     });
 
     function renderTable() {
@@ -123,28 +88,17 @@ tbody tr:nth-child(4n+4) {
         if (rawData.length === 0) return;
         
         const filter = document.getElementById('searchInput').value.toLowerCase();
-        
-        // Ambil header asli dari data pertama agar tidak salah panggil nama kolom
         const allHeaders = Object.keys(rawData[0]);
-        // Filter agar kolom 'Keterangan' tidak masuk (case insensitive)
-        const headers = allHeaders.filter(h => h.toLowerCase() !== 'keterangan');
+        
+        // Hanya ambil kolom sampai RT (indeks 0 sampai 8)
+        const headers = allHeaders.slice(0, 9);
+        
         const filtered = rawData.filter(r => {
-            const nama = (r['NAMA'] || '').toLowerCase();
-            const noRumah = (r['no rumah'] || '').toLowerCase();
-            const searchTerm = filter.toLowerCase();
-// Pencarian super fleksibel (mengabaikan spasi dan huruf besar/kecil)
-const namaClean = (r['NAMA'] || '').toLowerCase().replace(/\s+/g, '');
-const noRumahClean = (r['no rumah'] || '').toLowerCase().replace(/\s+/g, '');
-const searchClean = filter.toLowerCase().replace(/\s+/g, '');
-
-return namaClean.includes(searchClean) || noRumahClean.includes(searchClean);
-
-
-            
-            // Mencari di kolom NAMA ATAU kolom no rumah
-            return nama.includes(searchTerm) || noRumah.includes(searchTerm);
+            const namaClean = (r['NAMA'] || '').toLowerCase().replace(/\s+/g, '');
+            const noRumahClean = (r['no rumah'] || '').toLowerCase().replace(/\s+/g, '');
+            const searchClean = filter.replace(/\s+/g, '');
+            return namaClean.includes(searchClean) || noRumahClean.includes(searchClean);
         });
-
 
         let html = '<table><thead><tr>';
         headers.forEach(h => html += `<th>${h}</th>`);
@@ -154,20 +108,15 @@ return namaClean.includes(searchClean) || noRumahClean.includes(searchClean);
             html += '<tr>';
             headers.forEach(h => {
                 let val = row[h] || '-';
-                // Sembunyikan jika NO KK atau NIK
-                if (!unlocked && 
-    (h.toUpperCase().includes('NO KK') || 
-     h.toUpperCase().includes('NIK') ||
-     h.toUpperCase().includes('TGL LAHIR') ||
-     h.toUpperCase().includes('USIA'))) {
-    val = '.........';
-}
+                if (!unlocked && (h.toUpperCase().includes('NO KK') || h.toUpperCase().includes('NIK') || h.toUpperCase().includes('TGL LAHIR') || h.toUpperCase().includes('USIA'))) {
+                    val = '.........';
+                }
                 html += `<td>${val}</td>`;
             });
             html += '</tr>';
         });
 
-        html += '</tbody></table>';
+        html += '</table>';
         container.innerHTML = html;
     }
 
@@ -180,17 +129,9 @@ return namaClean.includes(searchClean) || noRumahClean.includes(searchClean);
         }
     }
 
-    // ===== REGISTER SERVICE WORKER =====
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('✅ Service Worker registered!'))
-        .catch(err => console.log('❌ Service Worker failed:', err));
+      navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed:', err));
     }
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/@vercel/analytics/dist/index.min.js"></script>
-<script>
-  window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };
-  va('send', 'pageview');
 </script>
 </body>
 </html>
