@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JVEP9B28Q3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JVEP9B28Q3');
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Media Cloud Blok AC</title>
@@ -158,10 +167,6 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.log('❌ Service Worker failed:', err));
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@vercel/analytics/dist/index.min.js"></script>
-<script>
-  window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };
-  va('send', 'pageview');
-</script>
+
 </body>
 </html>
